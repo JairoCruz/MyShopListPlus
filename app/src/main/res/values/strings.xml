@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MyShopListPlus</string>
+    <string name="put_message">Ingresa aqui tu mensage</string>
+    <string name="btnEnviar">Enviar</string>
+</resources>
