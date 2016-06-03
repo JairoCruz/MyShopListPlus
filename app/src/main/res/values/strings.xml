@@ -2,4 +2,11 @@
     <string name="app_name">MyShopListPlus</string>
     <string name="put_message">Ingresa aqui tu mensage</string>
     <string name="btnEnviar">Enviar</string>
+
+
+    <string name="paper_title_shopping_lists">Shopping Lists</string>
+    <string name="paper_title_meals">Meals</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
