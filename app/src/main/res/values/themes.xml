@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Con este style le estoy diciendo a mi app que utilice mi style AppTheme definido abajo
+        Este tema esta utilizado en el manifest en la etiqueta application, android:theme="@style/AppTheme-->
+    <style name="AppTheme" parent="AppTheme.Base">
+    </style>
+
+    <!--Theme para mi app-->
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!--Un estilo definido para el Toolbar de mi app-->
+    <style name="Toolbar" parent="Widget.AppCompat.Light.ActionBar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@color/primaryText</item>
+    </style>
+
+</resources>
