@@ -18,4 +18,8 @@
         <item name="android:textColorPrimary">@color/primaryText</item>
     </style>
 
+    <style name="CustomTheme.Dialog" parent="Theme.AppCompat.Light.Dialog">
+
+    </style>
+
 </resources>

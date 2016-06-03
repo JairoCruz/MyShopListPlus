@@ -2,15 +2,22 @@ package com.shoplist.myshoplistplus;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Toast;
+
+import com.shoplist.myshoplistplus.activeList.AddListDialogFragment;
+import com.shoplist.myshoplistplus.activeList.ShoppingListFragment;
+import com.shoplist.myshoplistplus.meals.MealsFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity {
 
@@ -48,6 +55,14 @@ public class MainActivity extends BaseActivity {
 
         /*Setup the TabLayout with view pager*/
         tabLayout.setupWithViewPager(pager);
+    }
+
+    /*
+    * Create an instance of the AddList dialog fragment an show it
+    * */
+    public void showAddListDialog(View view){
+        DialogFragment dialog = AddListDialogFragment.newInstance(mEncodedEmail);
+        dialog.show(MainActivity.this.getFragmentManager(), "AddListDialogFragment");
     }
 
 
