@@ -7,11 +7,16 @@ import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.utils.Constans;
 
@@ -64,6 +69,19 @@ public class AddListDialogFragment extends DialogFragment {
         View rootView = inflater.inflate(R.layout.dialog_add_list, null);
         mEditTextListName = (EditText) rootView.findViewById(R.id.edit_text_list_name);
 
+        /*
+        Call addShoppingList() when user taps "done" keyboard action
+        * */
+        mEditTextListName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE || event.getAction() == event.ACTION_DOWN){
+                    addShoppingList();
+                }
+                return true;
+            }
+        });
+
 
         /*Inflate and set the layout for the dialog
         * Pass null as the parent view because its going in the dialog layout
@@ -73,10 +91,41 @@ public class AddListDialogFragment extends DialogFragment {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                // method add Shopping List
+                addShoppingList();
+            }
+        });
 
+        // Add button cancel
+        builder.setView(rootView).setNegativeButton(R.string.negative_button, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
             }
         });
 
         return builder.create();
+    }
+
+    private void addShoppingList() {
+        String userEnteredName = mEditTextListName.getText().toString();
+
+//        If EditText input is not empty
+        if (!userEnteredName.equals("")){
+//            Create Firebase references
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("listName");
+            myRef.setValue(userEnteredName);
+
+
+
+
+/*
+        Close the dialog fragment
+*/
+            AddListDialogFragment.this.getDialog().cancel();
+        }
+
     }
 }

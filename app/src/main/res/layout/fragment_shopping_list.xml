@@ -4,7 +4,7 @@
     android:id="@+id/rl_fragment_shopping_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dividerColor"
+    android:background="@android:color/white"
     tools:context=".activeList.ShoppingListFragment">
 
     <LinearLayout
