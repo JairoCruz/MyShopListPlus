@@ -2,6 +2,7 @@ package com.shoplist.myshoplistplus.activeList;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -62,6 +63,19 @@ public class AddListDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View rootView = inflater.inflate(R.layout.dialog_add_list, null);
         mEditTextListName = (EditText) rootView.findViewById(R.id.edit_text_list_name);
+
+
+        /*Inflate and set the layout for the dialog
+        * Pass null as the parent view because its going in the dialog layout
+        * */
+
+        builder.setView(rootView).setPositiveButton(R.string.positive_button_create, new DialogInterface.OnClickListener(){
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
 
         return builder.create();
     }
