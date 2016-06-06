@@ -10,4 +10,6 @@
     <color name="primaryText">#FFFFFF</color>
     <color name="secondaryText">#727272</color>
     <color name="dividerColor">#B6B6B6</color>
+
+    <color name="light_black">#ece7e7</color>
 </resources>

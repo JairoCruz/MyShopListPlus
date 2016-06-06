@@ -14,6 +14,14 @@
         <item name="android:layout_margin">0dp</item>
         <item name="fabSize">normal</item>
         <item name="rippleColor">@android:color/white</item>
-        <item name="backgroundTint">@color/colorPrimary</item>
+        <item name="backgroundTint">@color/colorAccent</item>
     </style>
+
+    <style name="ListItemText">
+        <item name="android:textColor">@color/light_black</item>
+        <item name="android:textSize">@dimen/list_item_text_size</item>
+        <item name="android:layout_margin">2dp</item>
+    </style>
+
+
 </resources>
