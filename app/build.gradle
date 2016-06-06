@@ -26,8 +26,8 @@ dependencies {
     //    Estas librerias son para poder utilizar ButterKnife
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
-    // Single target that includes all FirebaseUI libraries
-    compile 'com.firebaseui:firebase-ui:0.4.0'
+    /* Firebase UI */
+    compile 'com.firebaseui:firebase-ui:0.2.2'
 
     compile 'com.google.firebase:firebase-database:9.0.1'
     compile 'com.jakewharton:butterknife:7.0.1'
