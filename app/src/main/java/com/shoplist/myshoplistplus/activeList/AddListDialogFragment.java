@@ -118,7 +118,7 @@ public class AddListDialogFragment extends DialogFragment {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("activeList");
             ShoppingList shoppingList = new ShoppingList(userEnteredName, "Anonymous Owner");
-            myRef.child("activeList").setValue(shoppingList);
+            myRef.setValue(shoppingList);
             //myRef.setValue(userEnteredName);
 
 

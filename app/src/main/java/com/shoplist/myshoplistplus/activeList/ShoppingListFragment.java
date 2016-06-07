@@ -96,15 +96,21 @@ public class ShoppingListFragment extends Fragment {
         initializeScreen(rootView);
 
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("activeList").child("activeList");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("activeList");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ShoppingList shoppingList = dataSnapshot.getValue(ShoppingList.class);
-                // Log.d("error", "Value is:" + listName);
-                mTextViewListName.setText(shoppingList.getListName());
-                mTextViewOwner.setText(shoppingList.getOwner());
-
+                // Utilizo el methodo de dataSnapshot.exists para saber si existe la referencia a la cual
+                // intento acceder
+                if (dataSnapshot.exists()) {
+                    ShoppingList shoppingList = dataSnapshot.getValue(ShoppingList.class);
+                    // Log.d("error", "Value is:" + listName);
+                    mTextViewListName.setText(shoppingList.getListName());
+                    mTextViewOwner.setText(shoppingList.getOwner());
+                }else{
+                    mTextViewListName.setText("Vacio");
+                    mTextViewOwner.setText("Vacio");
+                }
             }
 
             @Override
