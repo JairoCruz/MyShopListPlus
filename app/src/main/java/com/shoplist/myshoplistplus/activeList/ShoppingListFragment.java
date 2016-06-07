@@ -30,6 +30,7 @@ public class ShoppingListFragment extends Fragment {
     private ListView mListView;
     private ActiveListAdapter mActiveListAdapter;
     private TextView mTextViewListName;
+    private TextView mTextViewOwner;
 
 
 
@@ -95,13 +96,14 @@ public class ShoppingListFragment extends Fragment {
         initializeScreen(rootView);
 
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("listName");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("activeList").child("activeList");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String listName = dataSnapshot.getValue(String.class);
-                Log.d("error", "Value is:" + listName);
-                mTextViewListName.setText(listName);
+                ShoppingList shoppingList = dataSnapshot.getValue(ShoppingList.class);
+                // Log.d("error", "Value is:" + listName);
+                mTextViewListName.setText(shoppingList.getListName());
+                mTextViewOwner.setText(shoppingList.getOwner());
 
             }
 
@@ -117,7 +119,8 @@ public class ShoppingListFragment extends Fragment {
     private void initializeScreen(View rootView) {
         mListView = (ListView) rootView.findViewById(R.id.list_view_active_list);
         mTextViewListName = (TextView) rootView.findViewById(R.id.text_view_list_name);
-        mTextViewListName.setText("hola");
+        //mTextViewListName.setText("hola");
+        mTextViewOwner = (TextView) rootView.findViewById(R.id.text_view_created_by_user);
     }
 
 }

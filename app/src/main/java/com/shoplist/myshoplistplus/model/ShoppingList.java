@@ -6,13 +6,27 @@ package com.shoplist.myshoplistplus.model;
 
 public class ShoppingList {
     private String listName;
+    private String owner;
 
     public ShoppingList(){
         // Empty constructor
     }
 
-    public ShoppingList(String listName) {
+
+
+    public ShoppingList(String listName, String owner) {
         this.listName = listName;
+        this.owner = owner;
+
+    }
+
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String getListName() {

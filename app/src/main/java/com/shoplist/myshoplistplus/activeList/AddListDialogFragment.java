@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.shoplist.myshoplistplus.R;
+import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.utils.Constans;
 
 /**
@@ -115,8 +116,10 @@ public class AddListDialogFragment extends DialogFragment {
         if (!userEnteredName.equals("")){
 //            Create Firebase references
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("listName");
-            myRef.setValue(userEnteredName);
+            DatabaseReference myRef = database.getReference("activeList");
+            ShoppingList shoppingList = new ShoppingList(userEnteredName, "Anonymous Owner");
+            myRef.child("activeList").setValue(shoppingList);
+            //myRef.setValue(userEnteredName);
 
 
 

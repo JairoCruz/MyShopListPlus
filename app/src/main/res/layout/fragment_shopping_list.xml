@@ -11,6 +11,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <TextView
+            android:id="@+id/text_view_list_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ListItemText"/>
+
+        <TextView
+            android:id="@+id/text_view_created_by_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_view_list_name"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@+id/created_by"
+            android:layout_toRightOf="@+id/created_by"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+
 
         <!--Utilizo un ListView pero lo cambiare a un recyclerView-->
         <ListView
