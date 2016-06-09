@@ -37,6 +37,6 @@ public class ActiveListAdapter extends FirebaseListAdapter<ShoppingList> {
     protected void populateView(View v, ShoppingList model, int position) {
         TextView textViewListName = (TextView) v.findViewById(R.id.text_view_list_name);
         final TextView textViewCreatedByUser = (TextView) v.findViewById(R.id.text_view_created_by_user);
-        final TextView textViewUsersShopping = (TextView) v.findViewById(R.id.text_view_people_shopping_count);
+        //final TextView textViewUsersShopping = (TextView) v.findViewById(R.id.text_view_people_shopping_count);
     }
 }

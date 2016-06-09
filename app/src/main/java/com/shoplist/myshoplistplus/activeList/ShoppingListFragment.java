@@ -18,6 +18,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.utils.Constans;
+import com.shoplist.myshoplistplus.utils.Utils;
+
+import java.util.Date;
 
 
 /**
@@ -31,6 +34,7 @@ public class ShoppingListFragment extends Fragment {
     private ActiveListAdapter mActiveListAdapter;
     private TextView mTextViewListName;
     private TextView mTextViewOwner;
+    private TextView mTextViewEditTime;
 
 
 
@@ -103,10 +107,22 @@ public class ShoppingListFragment extends Fragment {
                 // Utilizo el methodo de dataSnapshot.exists para saber si existe la referencia a la cual
                 // intento acceder
                 if (dataSnapshot.exists()) {
+                    /*for (DataSnapshot child : dataSnapshot.getChildren()){
+                        Log.e("error", String.valueOf(child));
+                    }*/
                     ShoppingList shoppingList = dataSnapshot.getValue(ShoppingList.class);
                     // Log.d("error", "Value is:" + listName);
                     mTextViewListName.setText(shoppingList.getListName());
                     mTextViewOwner.setText(shoppingList.getOwner());
+                    // Si existe un valor para la fecha
+                    if (shoppingList.getTimestampLastChanged() != null){
+                        // Almaceno el dato de la fecha en una variable tipo long ya que asi es como se almacena en FireBase
+                        long dateLastChanged = (long) shoppingList.getTimestampLastChanged().get(Constans.FIREBASE_PROPERTY_TIMESTAMP);
+                        //Log.e("Error", Utils.SIMPLE_DATE_FORMAT.format(new Date(dateLastChanged)));
+                        // Luego llamo un metodo para formatear la fecha y sea legible
+                        mTextViewEditTime.setText(Utils.SIMPLE_DATE_FORMAT.format(new Date(dateLastChanged)));
+                    }
+
                 }else{
                     mTextViewListName.setText("Vacio");
                     mTextViewOwner.setText("Vacio");
@@ -127,6 +143,7 @@ public class ShoppingListFragment extends Fragment {
         mTextViewListName = (TextView) rootView.findViewById(R.id.text_view_list_name);
         //mTextViewListName.setText("hola");
         mTextViewOwner = (TextView) rootView.findViewById(R.id.text_view_created_by_user);
+        mTextViewEditTime = (TextView) rootView.findViewById(R.id.text_view_edit_time);
     }
 
 }

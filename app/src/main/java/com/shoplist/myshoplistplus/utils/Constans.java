@@ -6,4 +6,5 @@ package com.shoplist.myshoplistplus.utils;
 public final class Constans {
 
     public static final String KEY_ENCODED_EMAIL = "ENCODED_EMAIL";
+    public static final String FIREBASE_PROPERTY_TIMESTAMP = "timestamp";
 }
