@@ -1,6 +1,5 @@
 package com.shoplist.myshoplistplus.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.firebase.database.ServerValue;
 import com.shoplist.myshoplistplus.utils.Constans;
 
