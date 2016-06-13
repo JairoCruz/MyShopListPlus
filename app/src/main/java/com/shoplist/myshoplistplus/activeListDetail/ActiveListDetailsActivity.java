@@ -1,6 +1,7 @@
 package com.shoplist.myshoplistplus.activeListDetail;
 
-import android.support.v4.app.DialogFragment;
+
+import android.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -103,6 +104,32 @@ public class ActiveListDetailsActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Archive current list when user selects "Archive" menu item
+     */
+    public void archiveList(){
+
+    }
+
+    /**
+     * Start AddItemsFromMealActivity to add meal ingredients into the shopping list
+     * when the user taps on "add meal" fab
+     */
+    public void addMeal(View view){
+
+    }
+
+    /**
+     * Remove current shopping list and its items from all nodes
+     */
+    private void removeList() {
+        /* Create an instance of the dialog fragment and show it */
+        DialogFragment dialog = RemoveListDialogFragment.newInstance(mShoppingList);
+        dialog.show(getFragmentManager(), "RemoveListDialogFragment");
+    }
+
+
+
     private void initializeScreen() {
         mListView = (ListView) findViewById(R.id.list_view_shopping_list_items);
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
@@ -121,16 +148,26 @@ public class ActiveListDetailsActivity extends BaseActivity {
 
 
     /**
-     * Show the add list item dialog when user taps "add list item" fab
+     * Show edit list name dialog when user selects "Edit list name" menu item
      */
-    /*public void showAddListItemDialog(View view){
-        DialogFragment dialog = AddListItemDialogFragment.newInstance(mShoppingList);
-        dialog.show(getFragmentManager(), "AddListItemDialogFragment");
-    }*/
-
-    public void showEditListItemNameDialog(){
+    private void showEditListNameDialog() {
         /* Create an instance of the dialog fragment and show it */
         DialogFragment dialog = EditListNameDialogFragment.newInstance(mShoppingList);
         dialog.show(this.getFragmentManager(), "EditListNameDialogFragment");
+    }
+
+
+    /**
+     * Show the add list item dialog when user taps "add list item" fab
+     */
+    public void showAddListItemDialog(View view){
+        DialogFragment dialog = AddListItemDialogFragment.newInstance(mShoppingList);
+        dialog.show(getFragmentManager(), "AddListItemDialogFragment");
+    }
+
+    public void showEditListItemNameDialog(){
+        /* Create an instance of the dialog fragment and show it */
+       DialogFragment dialog = EditListItemNameDialogFragment.newInstance(mShoppingList);
+        dialog.show(this.getFragmentManager(),"EditListItemNameDialogFragment");
     }
 }

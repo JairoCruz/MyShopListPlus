@@ -19,4 +19,7 @@
     <string name="action_share_list">Share List</string>
     <string name="action_archive">Archive</string>
     <string name="action_remove_list">Remove List</string>
+    <string name="positive_button_edit_item">Edit name</string>
+    <string name="dialog_message_are_you_sure_remove_list">Are you sure you want to remove this list?</string>
+    <string name="positive_button_add_list_item">Add item</string>
 </resources>

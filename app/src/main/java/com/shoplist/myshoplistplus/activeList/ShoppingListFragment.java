@@ -1,14 +1,17 @@
 package com.shoplist.myshoplistplus.activeList;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.shoplist.myshoplistplus.R;
+import com.shoplist.myshoplistplus.activeListDetail.ActiveListDetailsActivity;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.utils.Constans;
 import com.shoplist.myshoplistplus.utils.Utils;
@@ -132,6 +136,28 @@ public class ShoppingListFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w("error1","Failed to read value", databaseError.toException());
+            }
+        });
+
+
+        /**
+         * Set interactive bits, such as click events and adapters
+         *
+         */
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+
+        // Agrego un OnClickListener a el TextView que tiene el nombre de la lista
+        mTextViewListName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /* Starts an active showing the details for the selected list */
+                Intent intent = new Intent(getActivity(), ActiveListDetailsActivity.class);
+                startActivity(intent);
             }
         });
 
