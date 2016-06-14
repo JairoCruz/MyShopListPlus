@@ -116,7 +116,7 @@ public class AddListDialogFragment extends DialogFragment {
         if (!userEnteredName.equals("")){
 //            Create Firebase references
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("activeList");
+            DatabaseReference myRef = database.getReference(Constans.FIREBASE_LOCATION_ACTIVE_LIST);
             ShoppingList shoppingList = new ShoppingList(userEnteredName, "Anonymous Owner");
             myRef.setValue(shoppingList);
             //myRef.setValue(userEnteredName);

@@ -103,8 +103,8 @@ public class ShoppingListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_shopping_list, container, false);
         initializeScreen(rootView);
 
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("activeList");
+        // Obtengo una referencia a mi objeto en firebase.
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LIST);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -136,6 +136,7 @@ public class ShoppingListFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w("error1","Failed to read value", databaseError.toException());
+
             }
         });
 

@@ -14,6 +14,7 @@
     <string name="create_list">Create a List</string>
 
 
+    <string name="title_activity_list_details">List Details</string>
     <string name="negative_button_cancel">Cancel</string>
     <string name="action_edit_list_name">Edit list name</string>
     <string name="action_share_list">Share List</string>

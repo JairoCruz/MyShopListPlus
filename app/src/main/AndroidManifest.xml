@@ -20,7 +20,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activeListDetail.ActiveListDetailsActivity"></activity>
+        <activity
+            android:name=".activeListDetail.ActiveListDetailsActivity"
+            android:label="@string/title_activity_list_details"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustPan">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+        </activity>
     </application>
 
 </manifest>

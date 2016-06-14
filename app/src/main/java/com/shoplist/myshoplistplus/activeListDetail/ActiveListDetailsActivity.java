@@ -2,24 +2,32 @@ package com.shoplist.myshoplistplus.activeListDetail;
 
 
 import android.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.shoplist.myshoplistplus.BaseActivity;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
+import com.shoplist.myshoplistplus.utils.Constans;
 
 public class ActiveListDetailsActivity extends BaseActivity {
 
     private static final String LOG_TAG = ActiveListDetailsActivity.class.getSimpleName();
     private ListView mListView;
     private ShoppingList mShoppingList;
+    private DatabaseReference mActiveListRef;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +40,48 @@ public class ActiveListDetailsActivity extends BaseActivity {
          */
         initializeScreen();
 
-        /* Calling invalidateOptionsMenu causes onCreateOptionsMenu to be called */
-        invalidateOptionsMenu();
+
+
+        /**
+         * Create Firebase references
+         *
+         */
+        mActiveListRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LIST);
+
+        mActiveListRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                /**
+                 * Saving the most recent version of current shopping list into mShoppinList if present
+                 * finish() the activity if the list is null (list was removed or unshared by it's owner
+                 * while current user is in the list details activity
+                 */
+                ShoppingList shoppingList = dataSnapshot.getValue(ShoppingList.class);
+
+                if (shoppingList == null){
+                    // Method from Activity
+                    finish();
+                    /**
+                     * Make sure to call return, otherwise the rest of the method will execute,
+                     * even after calling finish.
+                     */
+                    return;
+                }
+                mShoppingList = shoppingList;
+
+                /* Calling invalidateOptionsMenu causes onCreateOptionsMenu to be called */
+                invalidateOptionsMenu();
+
+                /* Set title appropriately */
+                setTitle(shoppingList.getListName());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Error", "Error de lectura" + databaseError.getMessage());
+            }
+        });
 
 
         /**
@@ -132,7 +180,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
 
     private void initializeScreen() {
         mListView = (ListView) findViewById(R.id.list_view_shopping_list_items);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
         /* Common toolbar setup */
         setSupportActionBar(toolbar);
 
