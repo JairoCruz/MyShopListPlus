@@ -7,6 +7,9 @@ public final class Constans {
 
     public static final String KEY_ENCODED_EMAIL = "ENCODED_EMAIL";
     public static final String FIREBASE_PROPERTY_TIMESTAMP = "timestamp";
+    public static final String FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED ="timestampLastChanged";
+    public static final String FIREBASE_PROPERTY_LIST_NAME = "listName";
     public static final String KEY_LAYOUT_RSOURCE = "LAYOUT_RESOURCE";
     public static final String FIREBASE_LOCATION_ACTIVE_LIST = "activeList";
+    public static final String KEY_LIST_NAME = "LIST_NAME";
 }

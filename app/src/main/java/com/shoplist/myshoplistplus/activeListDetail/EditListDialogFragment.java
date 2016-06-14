@@ -83,7 +83,7 @@ public abstract  class EditListDialogFragment extends DialogFragment {
                     EditListDialogFragment.this.getDialog().cancel();
                 }
 
-                return false;
+                return true;
             }
         });
 
