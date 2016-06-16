@@ -41,7 +41,6 @@ public class ActiveListDetailsActivity extends BaseActivity {
         Intent intent = this.getIntent();
         mListId = intent.getStringExtra(Constans.KEY_LIST_ID);
         if (mListId == null){
-            /* No point in continuing without a valid ID */
             finish();
             return;
         }
@@ -71,6 +70,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
 
                 if (shoppingList == null){
                     // Method from Activity
+                    Log.e("error","pase");
                     finish();
                     /**
                      * Make sure to call return, otherwise the rest of the method will execute,
@@ -183,7 +183,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
      */
     private void removeList() {
         /* Create an instance of the dialog fragment and show it */
-        DialogFragment dialog = RemoveListDialogFragment.newInstance(mShoppingList);
+        DialogFragment dialog = RemoveListDialogFragment.newInstance(mShoppingList, mListId);
         dialog.show(getFragmentManager(), "RemoveListDialogFragment");
     }
 

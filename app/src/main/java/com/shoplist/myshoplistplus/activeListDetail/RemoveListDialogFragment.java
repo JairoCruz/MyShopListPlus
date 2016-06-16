@@ -6,8 +6,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
+import com.shoplist.myshoplistplus.utils.Constans;
 
 /**
  * Created by TSE on 13/06/2016.
@@ -18,15 +21,18 @@ import com.shoplist.myshoplistplus.model.ShoppingList;
  */
 public class RemoveListDialogFragment extends DialogFragment {
 
+    String mListId;
+    private DatabaseReference listToRemoveRef;
     final static String LOG_TAG = RemoveListDialogFragment.class.getSimpleName();
 
 
     /**
      * Public static constructor that creates fragment and passes a bundle with data into it when adapter is created
      */
-    public static RemoveListDialogFragment newInstance(ShoppingList shoppingList){
+    public static RemoveListDialogFragment newInstance(ShoppingList shoppingList, String listId){
         RemoveListDialogFragment removeListDialogFragment = new RemoveListDialogFragment();
         Bundle bundle = new Bundle();
+        bundle.putString(Constans.KEY_LIST_ID, listId);
         removeListDialogFragment.setArguments(bundle);
         return removeListDialogFragment;
     }
@@ -37,6 +43,8 @@ public class RemoveListDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Recupero el valor del bundle pasado a traves de newInstanceHelper
+        mListId = getArguments().getString(Constans.KEY_LIST_ID);
     }
 
     @Override
@@ -62,6 +70,9 @@ public class RemoveListDialogFragment extends DialogFragment {
     }
 
     private void removeList(){
-
+        /* Get the location to remove from */
+        listToRemoveRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS).child(mListId);
+        /* Remove the value */
+        listToRemoveRef.removeValue();
     }
 }
