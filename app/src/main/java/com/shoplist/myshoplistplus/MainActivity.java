@@ -11,6 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.shoplist.myshoplistplus.activeList.AddListDialogFragment;
 import com.shoplist.myshoplistplus.activeList.ShoppingListFragment;
 import com.shoplist.myshoplistplus.meals.MealsFragment;
@@ -35,7 +38,9 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         // vinculacion con elemento ButterKnife
         ButterKnife.bind(this);
-
+        // Este codigo es para obtener informacion sobre la instancia de firebase y me muestre en la consola de debug
+        // aun si ver funcionabilidad
+        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
 
         initializeScreen();
     }

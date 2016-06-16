@@ -68,6 +68,7 @@ public class ShoppingListFragment extends Fragment {
         if(getArguments() != null){
             mEncodeEmail = getArguments().getString(Constans.KEY_ENCODED_EMAIL);
         }
+
     }
 
     @Override
