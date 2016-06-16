@@ -17,14 +17,13 @@ import com.shoplist.myshoplistplus.model.ShoppingList;
 // Populates the list_view_active_list inside ShoppingListFragment
 public class ActiveListAdapter extends FirebaseListAdapter<ShoppingList> {
 
-    private String mEncodedEmail;
+
 
     /**
      * Public constructor that initializes private instance variables when adapter is created
      */
-    public ActiveListAdapter(Activity activity, Class<ShoppingList> modelClass, int modelLayout, Query ref, String encodedEmail) {
+    public ActiveListAdapter(Activity activity, Class<ShoppingList> modelClass, int modelLayout, Query ref) {
         super(activity, modelClass, modelLayout, ref);
-        this.mEncodedEmail = encodedEmail;
         this.mActivity = activity;
     }
 
@@ -35,8 +34,15 @@ public class ActiveListAdapter extends FirebaseListAdapter<ShoppingList> {
      */
     @Override
     protected void populateView(View v, ShoppingList model, int position) {
+        /**
+         * Grab the needed Textivews and strings
+         */
         TextView textViewListName = (TextView) v.findViewById(R.id.text_view_list_name);
-        final TextView textViewCreatedByUser = (TextView) v.findViewById(R.id.text_view_created_by_user);
-        //final TextView textViewUsersShopping = (TextView) v.findViewById(R.id.text_view_people_shopping_count);
+        TextView textViewCreatedByUser = (TextView) v.findViewById(R.id.text_view_created_by_user);
+
+        /* Set the list name and owner */
+        textViewListName.setText(model.getListName());
+        textViewCreatedByUser.setText(model.getOwner());
+
     }
 }

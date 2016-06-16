@@ -33,12 +33,10 @@ import java.util.Date;
 public class ShoppingListFragment extends Fragment {
 
     private String mEncodeEmail;
-    // private ActiveListAdapter mActiveListAdapter;
-    private ListView mListView;
     private ActiveListAdapter mActiveListAdapter;
-    private TextView mTextViewListName;
-    private TextView mTextViewOwner;
-    private TextView mTextViewEditTime;
+    private DatabaseReference activeListsRef;
+    private ListView mListView;
+
 
 
 
@@ -51,10 +49,9 @@ public class ShoppingListFragment extends Fragment {
     * Right now there are not arguments...but eventually there will be
     * */
 
-    public static ShoppingListFragment newInstance(String encodeEmail){
+    public static ShoppingListFragment newInstance(String mEncodedEmail){
         ShoppingListFragment fragment = new ShoppingListFragment();
         Bundle args = new Bundle();
-        args.putString(Constans.KEY_ENCODED_EMAIL,encodeEmail);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,37 +63,16 @@ public class ShoppingListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments() != null){
-            mEncodeEmail = getArguments().getString(Constans.KEY_ENCODED_EMAIL);
         }
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
 
-        /**
-         * Create the adapter with selected sort order
-         */
-        // mActiveListAdapter = new ActiveListAdapter(getActivity(), ShoppingList.class, R.layout.single_active_list, orderedActivieUserListsRef, mEncodeEmail);
-
-        /**
-         *  Set the adapter to the mListView
-         * */
-      //  mListView.setAdapter(mActiveListAdapter);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-       // mActiveListAdapter.cleanup();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        /*// Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_shopping_list, container, false);*/
+
 
         /*
         * Initialize UI elements
@@ -104,42 +80,24 @@ public class ShoppingListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_shopping_list, container, false);
         initializeScreen(rootView);
 
-        // Obtengo una referencia a mi objeto en firebase.
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LIST);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Utilizo el methodo de dataSnapshot.exists para saber si existe la referencia a la cual
-                // intento acceder
-                if (dataSnapshot.exists()) {
-                    /*for (DataSnapshot child : dataSnapshot.getChildren()){
-                        Log.e("error", String.valueOf(child));
-                    }*/
-                    ShoppingList shoppingList = dataSnapshot.getValue(ShoppingList.class);
-                    // Log.d("error", "Value is:" + listName);
-                    mTextViewListName.setText(shoppingList.getListName());
-                    mTextViewOwner.setText(shoppingList.getOwner());
-                    // Si existe un valor para la fecha
-                    if (shoppingList.getTimestampLastChanged() != null){
-                        // Almaceno el dato de la fecha en una variable tipo long ya que asi es como se almacena en FireBase
-                        long dateLastChanged = (long) shoppingList.getTimestampLastChanged().get(Constans.FIREBASE_PROPERTY_TIMESTAMP);
-                        //Log.e("Error", Utils.SIMPLE_DATE_FORMAT.format(new Date(dateLastChanged)));
-                        // Luego llamo un metodo para formatear la fecha y sea legible
-                        mTextViewEditTime.setText(Utils.SIMPLE_DATE_FORMAT.format(new Date(dateLastChanged)));
-                    }
+        /**
+         * Create Firebase references
+         */
+        activeListsRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS);
 
-                }else{
-                    mTextViewListName.setText("Vacio");
-                    mTextViewOwner.setText("Vacio");
-                }
-            }
+        /**
+         * Add ValueEventListeners to Firebase references
+         * to control get data and control behavior and visibility of elements
+         */
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("error1","Failed to read value", databaseError.toException());
+        mActiveListAdapter = new ActiveListAdapter(getActivity(), ShoppingList.class, R.layout.single_active_list, activeListsRef);
 
-            }
-        });
+        /**
+         * Set the adapter to the mListView
+         */
+        mListView.setAdapter(mActiveListAdapter);
+
+
 
 
         /**
@@ -153,25 +111,28 @@ public class ShoppingListFragment extends Fragment {
             }
         });
 
-        // Agrego un OnClickListener a el TextView que tiene el nombre de la lista
-        mTextViewListName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /* Starts an active showing the details for the selected list */
-                Intent intent = new Intent(getActivity(), ActiveListDetailsActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
         return rootView;
     }
 
+    /**
+     * Cleanup the adapter when activity is destroyed
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mActiveListAdapter.cleanup();
+    }
+
+    /**
+     * Link list view from XML
+     * @param rootView
+     */
+
     private void initializeScreen(View rootView) {
         mListView = (ListView) rootView.findViewById(R.id.list_view_active_list);
-        mTextViewListName = (TextView) rootView.findViewById(R.id.text_view_list_name);
-        //mTextViewListName.setText("hola");
-        mTextViewOwner = (TextView) rootView.findViewById(R.id.text_view_created_by_user);
-        mTextViewEditTime = (TextView) rootView.findViewById(R.id.text_view_edit_time);
+
     }
 
 }

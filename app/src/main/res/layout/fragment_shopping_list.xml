@@ -11,10 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <include
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/single_active_list"/>
 
 
         <!--Utilizo un ListView pero lo cambiare a un recyclerView-->
