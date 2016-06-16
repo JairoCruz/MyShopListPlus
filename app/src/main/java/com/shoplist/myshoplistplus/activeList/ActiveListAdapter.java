@@ -18,7 +18,6 @@ import com.shoplist.myshoplistplus.model.ShoppingList;
 public class ActiveListAdapter extends FirebaseListAdapter<ShoppingList> {
 
 
-
     /**
      * Public constructor that initializes private instance variables when adapter is created
      */

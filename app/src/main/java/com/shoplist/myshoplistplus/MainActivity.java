@@ -40,7 +40,7 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         // Este codigo es para obtener informacion sobre la instancia de firebase y me muestre en la consola de debug
         // aun si ver funcionabilidad
-        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
+       // FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
 
         initializeScreen();
     }

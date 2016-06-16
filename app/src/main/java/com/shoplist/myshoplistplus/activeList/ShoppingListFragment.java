@@ -4,27 +4,18 @@ package com.shoplist.myshoplistplus.activeList;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.activeListDetail.ActiveListDetailsActivity;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.utils.Constans;
-import com.shoplist.myshoplistplus.utils.Utils;
-
-import java.util.Date;
 
 
 /**
@@ -38,8 +29,6 @@ public class ShoppingListFragment extends Fragment {
     private ListView mListView;
 
 
-
-
     public ShoppingListFragment() {
         // Required empty public constructor
     }
@@ -49,7 +38,7 @@ public class ShoppingListFragment extends Fragment {
     * Right now there are not arguments...but eventually there will be
     * */
 
-    public static ShoppingListFragment newInstance(String mEncodedEmail){
+    public static ShoppingListFragment newInstance(String mEncodedEmail) {
         ShoppingListFragment fragment = new ShoppingListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -62,11 +51,10 @@ public class ShoppingListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() != null){
+        if (getArguments() != null) {
         }
 
     }
-
 
 
     @Override
@@ -86,8 +74,9 @@ public class ShoppingListFragment extends Fragment {
         activeListsRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS);
 
         /**
-         * Add ValueEventListeners to Firebase references
-         * to control get data and control behavior and visibility of elements
+         * Create the adapter, giving it the activity, model class, layout for each row in the
+         * list and finally, a reference to the Firebase location with the list data.
+         *
          */
 
         mActiveListAdapter = new ActiveListAdapter(getActivity(), ShoppingList.class, R.layout.single_active_list, activeListsRef);
@@ -98,20 +87,30 @@ public class ShoppingListFragment extends Fragment {
         mListView.setAdapter(mActiveListAdapter);
 
 
-
-
         /**
          * Set interactive bits, such as click events and adapters
-         *
+         * Add ItemClick Listener to ListView
          */
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                /* Por medio de el listener obtengo la posicion del elemento utilizando el metodo getItem y se lo paso a mi Variable del tipo ShoppingList */
+                ShoppingList selectedList = mActiveListAdapter.getItem(position);
+                /* Me aseguro que la variable no este vacia */
+                if (selectedList != null){
+                    /* Si no esta vacia Lanzo una nueva actividad en este caso Detail Activity */
+                    Intent intent = new Intent(getActivity(), ActiveListDetailsActivity.class);
+                    /**
+                     * Get the list ID usign the adapter's get ref method to get the Firebase
+                     * ref and then grab the key.
+                     */
+                    String listId = mActiveListAdapter.getRef(position).getKey();
+                    intent.putExtra(Constans.KEY_LIST_ID, listId);
+                    /* Starts an active showing the details for the selected list */
+                    startActivity(intent);
+                }
             }
         });
-
-
 
         return rootView;
     }
@@ -127,6 +126,7 @@ public class ShoppingListFragment extends Fragment {
 
     /**
      * Link list view from XML
+     *
      * @param rootView
      */
 

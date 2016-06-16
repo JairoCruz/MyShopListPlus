@@ -24,9 +24,9 @@ public class EditListNameDialogFragment extends EditListDialogFragment {
     /**
      * Public static constructor that creates fragment and passes a bundle with data into it when adapter is created
      */
-    public static EditListNameDialogFragment newInstance(ShoppingList shoppingList){
+    public static EditListNameDialogFragment newInstance(ShoppingList shoppingList, String listId){
         EditListNameDialogFragment editListNameDialogFragment = new EditListNameDialogFragment();
-        Bundle bundle = EditListDialogFragment.newInstanceHelper(shoppingList, R.layout.dialog_edit_list);
+        Bundle bundle = EditListDialogFragment.newInstanceHelper(shoppingList, R.layout.dialog_edit_list, listId);
         // Paso el valor del nombre de lista por medio de esta intancia empleando el bundle
         bundle.putString(Constans.KEY_LIST_NAME, shoppingList.getListName());
         editListNameDialogFragment.setArguments(bundle);
@@ -70,13 +70,13 @@ public class EditListNameDialogFragment extends EditListDialogFragment {
          */
         if (!inputListName.equals("")){
 
-            if (mListName != null){
+            if (mListName != null && mListId != null){
                 /**
                  * If editText input is not equal to the previous name
                  */
                 if (!inputListName.equals(mListName)){
 
-                    shoppingListRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LIST);
+                    shoppingListRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS).child(mListId);
                     /* Make a Hashmap for the specific properties you are changing */
                     HashMap<String, Object> updatedProperties = new HashMap<String, Object>();
                     updatedProperties.put(Constans.FIREBASE_PROPERTY_LIST_NAME, inputListName);

@@ -2,6 +2,7 @@ package com.shoplist.myshoplistplus.activeListDetail;
 
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -28,11 +29,27 @@ public class ActiveListDetailsActivity extends BaseActivity {
     private ShoppingList mShoppingList;
     private DatabaseReference mActiveListRef;
     private Toolbar toolbar;
+    private String mListId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_list_details);
+
+
+        /* Get the push ID from the extra passed by ShoppingListFragment */
+        Intent intent = this.getIntent();
+        mListId = intent.getStringExtra(Constans.KEY_LIST_ID);
+        if (mListId == null){
+            /* No point in continuing without a valid ID */
+            finish();
+            return;
+        }
+
+        /**
+         * Create Firebase references
+         */
+        mActiveListRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS).child(mListId);
 
 
         /**
@@ -41,12 +58,6 @@ public class ActiveListDetailsActivity extends BaseActivity {
         initializeScreen();
 
 
-
-        /**
-         * Create Firebase references
-         *
-         */
-        mActiveListRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LIST);
 
         mActiveListRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -200,7 +211,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
      */
     private void showEditListNameDialog() {
         /* Create an instance of the dialog fragment and show it */
-        DialogFragment dialog = EditListNameDialogFragment.newInstance(mShoppingList);
+        DialogFragment dialog = EditListNameDialogFragment.newInstance(mShoppingList, mListId);
         dialog.show(this.getFragmentManager(), "EditListNameDialogFragment");
     }
 
@@ -209,13 +220,14 @@ public class ActiveListDetailsActivity extends BaseActivity {
      * Show the add list item dialog when user taps "add list item" fab
      */
     public void showAddListItemDialog(View view){
-        DialogFragment dialog = AddListItemDialogFragment.newInstance(mShoppingList);
+        /* Create an instance of the dialog fragment and show it */
+        DialogFragment dialog = AddListItemDialogFragment.newInstance(mShoppingList, mListId);
         dialog.show(getFragmentManager(), "AddListItemDialogFragment");
     }
 
     public void showEditListItemNameDialog(){
         /* Create an instance of the dialog fragment and show it */
-       DialogFragment dialog = EditListItemNameDialogFragment.newInstance(mShoppingList);
+       DialogFragment dialog = EditListItemNameDialogFragment.newInstance(mShoppingList, mListId);
         dialog.show(this.getFragmentManager(),"EditListItemNameDialogFragment");
     }
 }

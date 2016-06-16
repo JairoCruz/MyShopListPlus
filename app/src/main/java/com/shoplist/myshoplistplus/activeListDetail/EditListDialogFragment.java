@@ -26,6 +26,7 @@ public abstract  class EditListDialogFragment extends DialogFragment {
 
     EditText mEditTextForList;
     int mResource;
+    String mListId;
 
 
     /**
@@ -35,8 +36,9 @@ public abstract  class EditListDialogFragment extends DialogFragment {
      * @return
      */
 
-    protected static Bundle newInstanceHelper(ShoppingList shoppingList, int resource){
+    protected static Bundle newInstanceHelper(ShoppingList shoppingList, int resource, String listId){
         Bundle bundle = new Bundle();
+        bundle.putString(Constans.KEY_LIST_ID, listId);
         bundle.putInt(Constans.KEY_LAYOUT_RSOURCE, resource);
         return bundle;
     }
@@ -46,6 +48,7 @@ public abstract  class EditListDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mListId = getArguments().getString(Constans.KEY_LIST_ID);
         mResource = getArguments().getInt(Constans.KEY_LAYOUT_RSOURCE);
     }
 
