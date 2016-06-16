@@ -17,9 +17,12 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.utils.Constans;
+
+import java.util.HashMap;
 
 /**
  * Created by TSE on 03/06/2016.
@@ -111,16 +114,35 @@ public class AddListDialogFragment extends DialogFragment {
 
     private void addShoppingList() {
         String userEnteredName = mEditTextListName.getText().toString();
+        String owner = "Anonymous Owner";
 
 //        If EditText input is not empty
         if (!userEnteredName.equals("")){
 //            Create Firebase references
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference(Constans.FIREBASE_LOCATION_ACTIVE_LIST);
-            ShoppingList shoppingList = new ShoppingList(userEnteredName, "Anonymous Owner");
-            myRef.setValue(shoppingList);
-            //myRef.setValue(userEnteredName);
+            DatabaseReference myRef = database.getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS);
 
+           /* Create a new reference */
+            DatabaseReference newListRef = myRef.push();
+
+            /* Save listsRef.push to maintain same randow Id */
+            final String listId = newListRef.getKey();
+
+            /**
+             * Set raw version of date to the ServerValue.TIMESTAMP value and save into
+             * timestampCreatedMap
+             */
+            HashMap<String, Object> timestampCreated = new HashMap<>();
+            timestampCreated.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
+
+            /* Buil the shopping List */
+            ShoppingList newShoppingList = new ShoppingList(userEnteredName, owner, timestampCreated);
+
+            /* Add the shopping list */
+            newListRef.setValue(newShoppingList);
+
+            /* Form short set method push() and setvalue()*/
+            /* myRef.push().setValue(newShoppingList); */
 
 
 

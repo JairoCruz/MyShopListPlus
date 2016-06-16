@@ -15,6 +15,7 @@ public class ShoppingList {
     private String listName;
     private String owner;
     private HashMap<String,Object> timestampLastChanged;
+    private HashMap<String,Object> timestampCreated;
 
 
     public ShoppingList(){
@@ -23,9 +24,10 @@ public class ShoppingList {
 
 
 
-    public ShoppingList(String listName, String owner) {
+    public ShoppingList(String listName, String owner, HashMap<String, Object> timestampCreated) {
         this.listName = listName;
         this.owner = owner;
+        this.timestampCreated = timestampCreated;
         // Para guardar la hora en la cual se hase un cambio en el registro utilizo un valor desde ServerValue.TIMESTAMP
         HashMap<String,Object> timestampLastChangedObj = new HashMap<String, Object>();
         timestampLastChangedObj.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
@@ -54,4 +56,7 @@ public class ShoppingList {
         return timestampLastChanged;
     }
 
+    public HashMap<String, Object> getTimestampCreated() {
+        return timestampCreated;
+    }
 }
