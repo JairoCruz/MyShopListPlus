@@ -23,4 +23,7 @@
     <string name="positive_button_edit_item">Edit name</string>
     <string name="dialog_message_are_you_sure_remove_list">Are you sure you want to remove this list?</string>
     <string name="positive_button_add_list_item">Add item</string>
+    <string name="bought_by">Bought By</string>
+    <string name="remove_item_option">Remove Item</string>
+    <string name="dialog_message_are_you_sure_remove_list_item">Are you sure you want to remove this Item?</string>
 </resources>

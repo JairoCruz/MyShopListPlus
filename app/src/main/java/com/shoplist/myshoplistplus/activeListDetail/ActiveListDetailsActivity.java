@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.shoplist.myshoplistplus.BaseActivity;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
+import com.shoplist.myshoplistplus.model.ShoppingListItem;
 import com.shoplist.myshoplistplus.utils.Constans;
 
 public class ActiveListDetailsActivity extends BaseActivity {
@@ -28,8 +29,10 @@ public class ActiveListDetailsActivity extends BaseActivity {
     private ListView mListView;
     private ShoppingList mShoppingList;
     private DatabaseReference mActiveListRef;
+    private DatabaseReference listItemsRef;
     private Toolbar toolbar;
     private String mListId;
+    private ActiveListItemAdapter mActiveListItemAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +52,21 @@ public class ActiveListDetailsActivity extends BaseActivity {
          * Create Firebase references
          */
         mActiveListRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS).child(mListId);
+        listItemsRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS).child(mListId);
 
 
         /**
          *  Link layout elements from XML and setup the toolbar
          */
         initializeScreen();
+
+
+        /**
+         * Setup the adapter
+         */
+        mActiveListItemAdapter = new ActiveListItemAdapter(this, ShoppingListItem.class, R.layout.single_active_list_item, listItemsRef);
+        /* Create ActiveListItemAdapter and set to listView */
+        mListView.setAdapter(mActiveListItemAdapter);
 
 
 
@@ -161,6 +173,12 @@ public class ActiveListDetailsActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mActiveListItemAdapter.cleanup();
     }
 
     /**
