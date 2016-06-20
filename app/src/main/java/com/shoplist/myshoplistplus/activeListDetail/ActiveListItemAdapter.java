@@ -1,8 +1,8 @@
 package com.shoplist.myshoplistplus.activeListDetail;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.Query;
 import com.shoplist.myshoplistplus.R;
-import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.model.ShoppingListItem;
 
 /**

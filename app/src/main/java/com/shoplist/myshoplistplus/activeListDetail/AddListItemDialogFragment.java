@@ -4,8 +4,10 @@ import android.app.Dialog;
 import android.os.Bundle;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.model.ShoppingListItem;
@@ -75,7 +77,26 @@ public class AddListItemDialogFragment extends EditListDialogFragment {
 
             /* Make a POJO for the item and immediately turn it into a HashMap */
             ShoppingListItem itemToAddObject = new ShoppingListItem(mItemName);
-            //HashMap<String, Object> itemToAdd = new ObjectMapper().convertValue(itemToAddObject, Map.class);
+            HashMap<String, Object> itemToAdd = (HashMap<String, Object>) new ObjectMapper().convertValue(itemToAddObject, Map.class);
+
+            /* Add the item to the update map */
+            updateItemToAddMap.put("/" + Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId + "/" + itemId, itemToAdd);
+
+            /* Make the timestamp for last changed */
+            HashMap<String, Object> changedTimestampMap = new HashMap<>();
+            changedTimestampMap.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
+
+            /* Add the update timestamp */
+            updateItemToAddMap.put("/" + Constans.FIREBASE_LOCATION_ACTIVE_LISTS + "/" + mListId + "/" + Constans.FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED, changedTimestampMap);
+
+            /* Do the update */
+            firebaseRef.updateChildren(updateItemToAddMap);
+
+            /**
+             * Close the dialog fragment when done
+             *
+             */
+        AddListItemDialogFragment.this.getDialog().cancel();
         }
     }
 }
