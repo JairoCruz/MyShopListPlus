@@ -33,6 +33,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
     private Toolbar toolbar;
     private String mListId;
     private ActiveListItemAdapter mActiveListItemAdapter;
+    private ValueEventListener mActiveListRefListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +65,13 @@ public class ActiveListDetailsActivity extends BaseActivity {
         /**
          * Setup the adapter
          */
-        mActiveListItemAdapter = new ActiveListItemAdapter(this, ShoppingListItem.class, R.layout.single_active_list_item, listItemsRef);
+        mActiveListItemAdapter = new ActiveListItemAdapter(this, ShoppingListItem.class, R.layout.single_active_list_item, listItemsRef, mListId);
         /* Create ActiveListItemAdapter and set to listView */
         mListView.setAdapter(mActiveListItemAdapter);
 
 
 
-        mActiveListRef.addValueEventListener(new ValueEventListener() {
+        mActiveListRefListener = mActiveListRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 /**
@@ -179,6 +180,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mActiveListItemAdapter.cleanup();
+        mActiveListRef.removeEventListener(mActiveListRefListener);
     }
 
     /**

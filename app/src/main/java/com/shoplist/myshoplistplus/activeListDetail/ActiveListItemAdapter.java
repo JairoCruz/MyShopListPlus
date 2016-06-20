@@ -21,7 +21,7 @@ public class ActiveListItemAdapter extends FirebaseListAdapter<ShoppingListItem>
     /**
      * Public constructor that initializes private instance variables when adapter is created
      */
-    public ActiveListItemAdapter(Activity activity, Class<ShoppingListItem> modelClass, int modelLayout, Query ref) {
+    public ActiveListItemAdapter(Activity activity, Class<ShoppingListItem> modelClass, int modelLayout, Query ref, String mListId ) {
         super(activity, modelClass, modelLayout, ref);
     }
 
