@@ -93,6 +93,12 @@ public class ActiveListDetailsActivity extends BaseActivity {
                 }
                 mShoppingList = shoppingList;
 
+                /**
+                 * Pass the shopping list to the adapter if it is not null.
+                 * We do this here becase mShoppingList is null when first created.
+                 */
+                mActiveListItemAdapter.setShoppingList(mShoppingList);
+
                 /* Calling invalidateOptionsMenu causes onCreateOptionsMenu to be called */
                 invalidateOptionsMenu();
 
@@ -118,9 +124,18 @@ public class ActiveListDetailsActivity extends BaseActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                /* Check that the view is not the empty foter item */
                 if (view.getId() != R.id.list_view_footer_empty){
-                    showEditListItemNameDialog();
+
+                    ShoppingListItem shoppingListItem = mActiveListItemAdapter.getItem(position);
+
+                    if (shoppingListItem != null){
+                        String itemName = shoppingListItem.getItemName();
+                        String itemId = mActiveListItemAdapter.getRef(position).getKey();
+
+                        showEditListItemNameDialog(itemName, itemId);
+                        return true;
+                    }
                 }
-                return true;
+                return false;
             }
         });
     }
@@ -245,9 +260,10 @@ public class ActiveListDetailsActivity extends BaseActivity {
         dialog.show(getFragmentManager(), "AddListItemDialogFragment");
     }
 
-    public void showEditListItemNameDialog(){
+    public void showEditListItemNameDialog(String itemName, String itemId){
         /* Create an instance of the dialog fragment and show it */
-       DialogFragment dialog = EditListItemNameDialogFragment.newInstance(mShoppingList, mListId);
-        dialog.show(this.getFragmentManager(),"EditListItemNameDialogFragment");
+       //DialogFragment dialog = EditListItemNameDialogFragment.newInstance(mShoppingList, itemName, itemId, mListId);
+
+        //dialog.show(this.getFragmentManager(),"EditListItemNameDialogFragment");
     }
 }
