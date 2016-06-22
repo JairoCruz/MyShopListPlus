@@ -17,4 +17,5 @@
     <dimen name="login_buttons_text_size">15.3sp</dimen>
     <dimen name="input_field_height_land">36dp</dimen>
     <dimen name="edit_text_padding_land">6dp</dimen>
+    <dimen name="activity_horizontal_margin_land">64dp</dimen>
 </resources>

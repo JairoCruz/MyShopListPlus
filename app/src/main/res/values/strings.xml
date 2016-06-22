@@ -76,4 +76,6 @@
     <!-- Log Messages -->
     <string name="log_message_password_changed_successfully">Password changed successfully from temporary password to </string>
     <string name="log_message_auth_successful">auth successful.</string>
+
+    <string name="title_activity_create_account">Create Account</string>
 </resources>
