@@ -2,14 +2,26 @@ package com.shoplist.myshoplistplus.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.shoplist.myshoplistplus.BaseActivity;
 import com.shoplist.myshoplistplus.R;
 
@@ -20,11 +32,20 @@ public class CreateAccountActivity extends BaseActivity {
     private EditText mEditTextUsernameCreate;
     private EditText mEditTextEmailCreate;
     private EditText mEditTextPasswordCreate;
+    private String mUserName;
+    private String mUserEmail;
+    private String mPassword;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+
+        /**
+         * Create Firebase references
+         */
+        mAuth = FirebaseAuth.getInstance() ;
 
         /**
          * Link layout elements form XML and setup the progress dialog
@@ -69,6 +90,48 @@ public class CreateAccountActivity extends BaseActivity {
      * Create new account usign Firebase email/password provider
      */
     public void onCreateAccountPressed(View view){
+        mUserName = mEditTextPasswordCreate.getText().toString();
+        mUserEmail = mEditTextEmailCreate.getText().toString().toLowerCase();
+        mPassword = mEditTextPasswordCreate.getText().toString();
+
+        /**
+         * Check that email and user name are okay
+         */
+        boolean validEmail = isEmailValid(mUserEmail);
+        boolean validUserName = isUserNameValid(mUserName);
+        boolean validPassword = isPasswordValid(mPassword);
+
+        if (!validEmail || !validUserName || !validPassword) return;
+
+        /**
+         * If everything was valid show the progress dialog to indicate that
+         * account creation has started
+         */
+        mAuthProgressDialog.show();
+
+        /**
+         * Create new user with specified Email and password
+         */
+        mAuth.createUserWithEmailAndPassword(mUserEmail, mPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    /* Dismiss the progress dialog */
+                    mAuthProgressDialog.dismiss();
+                    Log.i(LOG_TAG, getString(R.string.log_message_auth_successful));
+                    /* If successful create user then log out */
+                    FirebaseAuth.getInstance().signOut();
+                }else{
+                    /* Error occurred, log the error and dismiss the progress dialog */
+                    mAuthProgressDialog.dismiss();
+                    Log.d(LOG_TAG, getString(R.string.log_error_occurred) + task.getException());
+                    /* Display the appropriate error message */
+                    FirebaseAuthException l = (FirebaseAuthException) task.getException();
+                    Log.e("error ver", l.getErrorCode());
+                    showErrorToast(task.getException().getMessage());
+                }
+            }
+        });
 
     }
 
@@ -80,14 +143,27 @@ public class CreateAccountActivity extends BaseActivity {
     }
 
     private boolean isEmailValid(String email){
-        return true;
+        boolean isGoodEmail = (email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches());
+        if (!isGoodEmail){
+            mEditTextEmailCreate.setError(String.format(getString(R.string.error_invalid_email_not_valid), email));
+            return isGoodEmail;
+        }
+        return isGoodEmail;
     }
 
     private boolean isUserNameValid(String userName){
+        if (userName.equals("")){
+            mEditTextUsernameCreate.setError(getResources().getString(R.string.error_cannot_be_empty));
+            return false;
+        }
         return true;
     }
 
     private boolean isPasswordValid(String password){
+        if (password.length() < 6){
+            mEditTextPasswordCreate.setError(getResources().getString(R.string.error_invalid_password_not_valid));
+            return false;
+        }
         return true;
     }
 

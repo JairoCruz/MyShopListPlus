@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -25,6 +26,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.Scope;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.shoplist.myshoplistplus.BaseActivity;
 import com.shoplist.myshoplistplus.R;
 
@@ -41,6 +44,9 @@ public class LoginActivity extends BaseActivity {
     private ProgressDialog mAuthProgressDialog;
     private EditText mEditTextEmailInput;
     private EditText mEditTextPasswordInput;
+
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseAuth mAuth;
 
     /**
      * Variables related to Google Login
@@ -65,6 +71,25 @@ public class LoginActivity extends BaseActivity {
          */
         initializeScreen();
 
+        mAuth = FirebaseAuth.getInstance();
+
+        /**
+         * Set up an AuthStateListener that responds to changes in the user's sign-in state
+         */
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(LOG_TAG, "onAuthStateChanged:signed_in: " + user.getUid());
+                }else{
+                    // User is signed out
+                    Log.d(LOG_TAG, "onAuthStateChanged:signed_out");
+                }
+            }
+        };
+
         /**
          * Call signInPassword() when user taps "Done" keyboard action
          */
@@ -80,6 +105,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
     }
@@ -87,6 +118,14 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuthListener != null){
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 
     /**
