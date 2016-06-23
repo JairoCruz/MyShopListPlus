@@ -38,8 +38,8 @@
                 android:hint="@string/hint_enter_username"
                 android:inputType="textCapWords"
                 android:padding="@dimen/edit_text_padding"
-                android:textColor="@color/lightPrimaryColor"
-                android:textColorHint="@color/dividerColor"
+                android:textColor="@color/secondaryText"
+                android:textColorHint="@color/colorAccent"
                 android:textSize="@dimen/login_buttons_text_size"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -60,8 +60,8 @@
                 android:hint="@string/hint_enter_email"
                 android:inputType="textEmailAddress"
                 android:padding="@dimen/edit_text_padding"
-                android:textColor="@color/lightPrimaryColor"
-                android:textColorHint="@color/dividerColor"
+                android:textColor="@color/secondaryText"
+                android:textColorHint="@color/colorAccent"
                 android:textSize="@dimen/login_buttons_text_size"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -82,8 +82,8 @@
                 android:hint="@string/hint_enter_password"
                 android:inputType="textPassword"
                 android:padding="@dimen/edit_text_padding"
-                android:textColor="@color/lightPrimaryColor"
-                android:textColorHint="@color/dividerColor"
+                android:textColor="@color/secondaryText"
+                android:textColorHint="@color/colorAccent"
                 android:textSize="@dimen/login_buttons_text_size"/>
 
         </android.support.design.widget.TextInputLayout>

@@ -6,10 +6,13 @@
     </style>
 
     <!--Theme para mi app-->
-    <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/primaryText</item>
+        <item name="android:textColorSecondary">@color/secondaryText</item>
+
     </style>
 
     <!--Un estilo definido para el Toolbar de mi app-->
@@ -31,3 +34,9 @@
     </style>
 
 </resources>
+
+<!--
+Dark: Theme.AppCompat
+Light: Theme.AppCompat.Light
+Light with Dark ActionBar: Theme.AppCompat.Light:DarkActionBar
+-->

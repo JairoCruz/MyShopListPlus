@@ -20,6 +20,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
  */
 public abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     protected  GoogleApiClient mGoogleApiClient;
+    protected String mEncodedEmail;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

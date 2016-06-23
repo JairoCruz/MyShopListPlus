@@ -24,7 +24,8 @@
     </style>
 
     <style name="HintText">
-        <item name="android:textSize">0dp</item>
+        <!--Tube que colocar un 1dp para que no se mostrara el hit text del EditText en login si lo coloco a 0dp se muestra-->
+        <item name="android:textSize">1dp</item>
     </style>
 
     <style name="LoginCreateText">

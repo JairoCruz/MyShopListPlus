@@ -52,8 +52,8 @@
                 android:inputType="textEmailAddress"
                 android:nextFocusDown="@+id/edit_text_password"
                 android:padding="@dimen/edit_text_padding"
-                android:textColor="@color/lightPrimaryColor"
-                android:textColorHint="@color/dividerColor"
+                android:textColor="@color/secondaryText"
+                android:textColorHint="@color/colorAccent"
                 android:textSize="@dimen/login_buttons_text_size"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -74,9 +74,10 @@
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:padding="@dimen/edit_text_padding"
-                android:textColor="@color/lightPrimaryColor"
-                android:textColorHint="@color/dividerColor"
-                android:textSize="@dimen/login_buttons_text_size"/>
+                android:textColor="@color/secondaryText"
+                android:textColorHint="@color/colorAccent"
+                android:textSize="@dimen/login_buttons_text_size"
+                />
 
         </android.support.design.widget.TextInputLayout>
 

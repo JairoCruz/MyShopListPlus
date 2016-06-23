@@ -109,8 +109,8 @@ public class LoginActivity extends BaseActivity {
      * Open CreateAccountActivity when user taps on "Sign up" TextView
      */
     public void onSignUpPressed(View view){
-        //Intent intent = new Intent(LoginActivity.this, CreateAccountAcitivity.class);
-       // startActivity(intent);
+        Intent intent = new Intent(LoginActivity.this, CreateAccountActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -144,7 +144,7 @@ public class LoginActivity extends BaseActivity {
     /**
      * Helper method that makes sure a user is created if the user
      * logs in with Firebase's email/password provider.
-     * @param authData AuthData object returned from onAuthenticated
+     * authData AuthData object returned from onAuthenticated
      */
     private void setAuthnticatedUserPasswrodProvider(/*AuthData authData*/){
 
@@ -153,7 +153,7 @@ public class LoginActivity extends BaseActivity {
     /**
      * Helper method that makes suere a user is created if the user
      * logs in with Firebase's Google login provider.
-     * @param authData AuthData object returned from onAuthenticated
+     * authData AuthData object returned from onAuthenticated
      */
     private void setAuthenticatedUserGoogle(/*AuthData authData*/){
 
