@@ -28,10 +28,12 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.shoplist.myshoplistplus.BaseActivity;
 import com.shoplist.myshoplistplus.MainActivity;
 import com.shoplist.myshoplistplus.R;
@@ -302,12 +304,16 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+
     private void handleSignInResult(GoogleSignInResult result){
         Log.d(LOG_TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()){
             /* Signed in successfully, get the OAuth token */
             mGoogleAccount = result.getSignInAccount();
-            getGoogleOAuthTokenAndLogin();
+            Log.e("mis datos", mGoogleAccount.getDisplayName()+ " " + mGoogleAccount.getEmail());
+
+            //getGoogleOAuthTokenAndLogin();
+            firebaseAuthWithGoogle(mGoogleAccount);
         }else{
             if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_CANCELLED){
                 showErrorToast("The sign in was cancelled. Make sure you're connected to the internet and try again.");
@@ -318,9 +324,38 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct){
+        Log.e(LOG_TAG, "FirebaseAuthWithGoogle: " + acct.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                //Log.d(LOG_TAG, "signInWithCredential:onComplet: " + task.isSuccessful());
+                if (task.isSuccessful()){
+                    Log.d(LOG_TAG, "signInWithCredential:onComplet: " + task.isSuccessful());
+                    showErrorToast("bien hecho");
+                    mAuthProgressDialog.dismiss();
+                     /* Go to main Activity */
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }else{
+                    mAuthProgressDialog.dismiss();
+                    showErrorToast(task.getException().getMessage());
+                }
+            }
+        });
+
+    }
+
     /**
      * Gets the GoogleAuthToken and logs in.
      */
+
+    // Este metodo no lo utilizo, ya que segui la nueva guia de Firebase
     private void getGoogleOAuthTokenAndLogin(){
         /* Get OAuth token in Background */
         AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
