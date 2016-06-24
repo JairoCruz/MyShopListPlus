@@ -20,10 +20,18 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.shoplist.myshoplistplus.BaseActivity;
 import com.shoplist.myshoplistplus.R;
+import com.shoplist.myshoplistplus.model.User;
+import com.shoplist.myshoplistplus.utils.Constans;
+
+import java.util.HashMap;
 
 public class CreateAccountActivity extends BaseActivity {
 
@@ -37,6 +45,7 @@ public class CreateAccountActivity extends BaseActivity {
     private String mUserEmail;
     private String mPassword;
     private FirebaseAuth mAuth;
+    private DatabaseReference userLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +100,7 @@ public class CreateAccountActivity extends BaseActivity {
      * Create new account usign Firebase email/password provider
      */
     public void onCreateAccountPressed(View view){
-        mUserName = mEditTextPasswordCreate.getText().toString();
+        mUserName = mEditTextUsernameCreate.getText().toString();
         mUserEmail = mEditTextEmailCreate.getText().toString().toLowerCase();
         mPassword = mEditTextPasswordCreate.getText().toString();
 
@@ -121,6 +130,12 @@ public class CreateAccountActivity extends BaseActivity {
                     /* Dismiss the progress dialog */
                     mAuthProgressDialog.dismiss();
                     Log.i(LOG_TAG, getString(R.string.log_message_auth_successful));
+
+                    /* Create de User Data */
+                    AuthResult authResult = task.getResult();
+                    String uid = authResult.getUser().getUid();
+                    createUserInFirebaseHelper(uid);
+
                     /* If successful create user then log out */
                     FirebaseAuth.getInstance().signOut();
                 }else{
@@ -140,7 +155,31 @@ public class CreateAccountActivity extends BaseActivity {
     /**
      * Creates a new user in Firebase form the Java POJO
      */
-    private void createUserInFirebaseHelper(final String encodedEmail){
+    private void createUserInFirebaseHelper(String uid){
+        userLocation = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_USERS).child(uid);
+        /**
+         * See if there is already a user (for example, if they already logged in with an associated
+         * Google account.
+         */
+        userLocation.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                /* If there is no user, make one */
+                if (dataSnapshot.getValue() == null){
+                    /* Set raw version of date to the ServerValue.TIMESTAMP value and save into dateCreatedMap */
+                    HashMap<String, Object> timestampJoined = new HashMap<>();
+                    timestampJoined.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
+
+                    User newUser = new User(mUserName, mUserEmail, timestampJoined);
+                    userLocation.setValue(newUser);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(LOG_TAG, getString(R.string.log_error_occurred) + databaseError.getMessage());
+            }
+        });
 
     }
 

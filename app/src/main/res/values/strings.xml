@@ -81,5 +81,5 @@
     <string name="log_error_occurred">A error has ocurred</string>
 
 
-   <!-- <string name="default_web_client_id">803823576065-9696b7l6dufdbfntr4u3p1v2koehoedi.apps.googleusercontent.com</string>-->
+    <string name="default_web_client_myId">803823576065-9696b7l6dufdbfntr4u3p1v2koehoedi.apps.googleusercontent.com</string>
 </resources>
