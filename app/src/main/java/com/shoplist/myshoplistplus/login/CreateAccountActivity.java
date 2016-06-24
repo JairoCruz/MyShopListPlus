@@ -27,6 +27,7 @@ import com.shoplist.myshoplistplus.R;
 
 public class CreateAccountActivity extends BaseActivity {
 
+
     private static final String LOG_TAG = CreateAccountActivity.class.getSimpleName();
     private ProgressDialog mAuthProgressDialog;
     private EditText mEditTextUsernameCreate;
@@ -115,6 +116,7 @@ public class CreateAccountActivity extends BaseActivity {
         mAuth.createUserWithEmailAndPassword(mUserEmail, mPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+
                 if (task.isSuccessful()){
                     /* Dismiss the progress dialog */
                     mAuthProgressDialog.dismiss();

@@ -26,9 +26,14 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
 import com.shoplist.myshoplistplus.BaseActivity;
+import com.shoplist.myshoplistplus.MainActivity;
 import com.shoplist.myshoplistplus.R;
 
 import java.io.IOException;
@@ -178,6 +183,41 @@ public class LoginActivity extends BaseActivity {
      */
     public void signInPassword(){
 
+        String email = mEditTextEmailInput.getText().toString();
+        String password = mEditTextPasswordInput.getText().toString();
+
+        /**
+         * If email and password are not empty shwo progress dialog and try to authenticate
+         */
+        if (email.equals("")){
+            mEditTextEmailInput.setError(getString(R.string.error_cannot_be_empty));
+            return;
+        }
+
+        if (password.equals("")){
+            mEditTextPasswordInput.setError(getString(R.string.error_cannot_be_empty));
+            return;
+        }
+        mAuthProgressDialog.show();
+
+        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    mAuthProgressDialog.dismiss();
+                    Log.i(LOG_TAG, FirebaseAuthProvider.PROVIDER_ID +  getString(R.string.log_message_auth_successful));
+                    /* Go to main Activity */
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }else {
+                    mAuthProgressDialog.dismiss();
+                    showErrorToast(task.getException().getMessage());
+                }
+            }
+        });
+
     }
 
     /**
@@ -210,6 +250,10 @@ public class LoginActivity extends BaseActivity {
      * @param token A Google OAuth access token returned from Google
      */
     private void loginWithGoogle(String token){
+        /**
+         * Obtener sha-1
+         * C:\Program Files\Java\jdk1.8.0_20\bin>keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+         */
 
     }
 
@@ -234,6 +278,7 @@ public class LoginActivity extends BaseActivity {
         mAuthProgressDialog.show();
     }
 
+    @Override
     public void onConnectionFailed(ConnectionResult result){
         /**
          * An unresolvable error has occurred and Google APIs (including Sign-In) will not

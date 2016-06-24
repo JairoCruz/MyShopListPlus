@@ -11,6 +11,7 @@
     
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/empty_footer_height" />
+        android:layout_height="@dimen/empty_footer_height"
+        android:text="I'm footer"/>
 
 </RelativeLayout>
