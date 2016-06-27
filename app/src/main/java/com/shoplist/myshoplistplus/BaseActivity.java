@@ -19,6 +19,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
  * Created by TSE on 03/06/2016.
  */
 public abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    /* Client used to interact with Google APIs*/
     protected  GoogleApiClient mGoogleApiClient;
     protected String mEncodedEmail;
 

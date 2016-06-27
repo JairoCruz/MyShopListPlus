@@ -30,6 +30,7 @@ import com.shoplist.myshoplistplus.BaseActivity;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.User;
 import com.shoplist.myshoplistplus.utils.Constans;
+import com.shoplist.myshoplistplus.utils.Utils;
 
 import java.util.HashMap;
 
@@ -131,10 +132,10 @@ public class CreateAccountActivity extends BaseActivity {
                     mAuthProgressDialog.dismiss();
                     Log.i(LOG_TAG, getString(R.string.log_message_auth_successful));
 
-                    /* Create de User Data */
+                   /* *//* Create de User Data *//*
                     AuthResult authResult = task.getResult();
-                    String uid = authResult.getUser().getUid();
-                    createUserInFirebaseHelper(uid);
+                    String uid = authResult.getUser().getUid();*/
+                    createUserInFirebaseHelper();
 
                     /* If successful create user then log out */
                     FirebaseAuth.getInstance().signOut();
@@ -155,8 +156,13 @@ public class CreateAccountActivity extends BaseActivity {
     /**
      * Creates a new user in Firebase form the Java POJO
      */
-    private void createUserInFirebaseHelper(String uid){
-        userLocation = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_USERS).child(uid);
+    private void createUserInFirebaseHelper(){
+        /**
+         * Con este cambio ahora coloco como Key el Email del usuario, debo recordar que creo el usuario en la db de firebase y en
+         * Auth de FireBase.
+         */
+        final String encodedEmail = Utils.encodeEmail(mUserEmail);
+        userLocation = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_USERS).child(encodedEmail);
         /**
          * See if there is already a user (for example, if they already logged in with an associated
          * Google account.
@@ -170,7 +176,7 @@ public class CreateAccountActivity extends BaseActivity {
                     HashMap<String, Object> timestampJoined = new HashMap<>();
                     timestampJoined.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
 
-                    User newUser = new User(mUserName, mUserEmail, timestampJoined);
+                    User newUser = new User(mUserName, encodedEmail, timestampJoined);
                     userLocation.setValue(newUser);
                 }
             }

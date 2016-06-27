@@ -25,4 +25,11 @@ public final class Constans {
     public static final String KEY_LIST_ID = "LIST_ID";
     public static final String KEY_LIST_ITEM_NAME = "ITEM_NAME";
     public static final String KEY_LIST_ITEM_ID = "LIST_ITEM_ID";
+    public static final String KEY_GOOGLE_EMAIL = "GOOGLE_EMAIL";
+
+
+    /**
+     * Constants for Firebase login
+     */
+    public static final String PROVIDER_DATA_DISPLAY_NAME = "displayName";
 }

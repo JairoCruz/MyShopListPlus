@@ -2,8 +2,10 @@ package com.shoplist.myshoplistplus.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,6 +28,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.server.converter.StringToIntConverter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -34,11 +37,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.shoplist.myshoplistplus.BaseActivity;
 import com.shoplist.myshoplistplus.MainActivity;
 import com.shoplist.myshoplistplus.R;
+import com.shoplist.myshoplistplus.model.User;
+import com.shoplist.myshoplistplus.utils.Constans;
+import com.shoplist.myshoplistplus.utils.Utils;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * A login screen that offers login via email/password.
@@ -54,6 +67,7 @@ public class LoginActivity extends BaseActivity {
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
+    private DatabaseReference userLocation;
 
     /**
      * Variables related to Google Login
@@ -335,6 +349,40 @@ public class LoginActivity extends BaseActivity {
                 //Log.d(LOG_TAG, "signInWithCredential:onComplet: " + task.isSuccessful());
                 if (task.isSuccessful()){
                     Log.d(LOG_TAG, "signInWithCredential:onComplet: " + task.isSuccessful());
+
+
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor spe = sp.edit();
+                    String unprocessedEmail;
+                    if (mGoogleApiClient.isConnected()){
+                        unprocessedEmail = mGoogleAccount.getEmail().toLowerCase();
+                        spe.putString(Constans.KEY_GOOGLE_EMAIL, unprocessedEmail).apply();
+                    }else{
+                        unprocessedEmail = sp.getString(Constans.KEY_GOOGLE_EMAIL, null);
+                    }
+                    mEncodedEmail = Utils.encodeEmail(unprocessedEmail);
+
+                    final String userName = mGoogleAccount.getDisplayName();
+
+                    userLocation = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_USERS).child(mEncodedEmail);
+                    userLocation.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.getValue() == null){
+                                HashMap<String, Object> timestampJoined = new HashMap<>();
+                                timestampJoined.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
+                                User newUser = new User(userName, mEncodedEmail, timestampJoined);
+                                userLocation.setValue(newUser);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.d(LOG_TAG, getString(R.string.log_error_occurred) + databaseError.getMessage());
+                        }
+                    });
+
+
                     showErrorToast("bien hecho");
                     mAuthProgressDialog.dismiss();
                      /* Go to main Activity */
