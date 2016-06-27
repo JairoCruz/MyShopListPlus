@@ -342,7 +342,7 @@ public class LoginActivity extends BaseActivity {
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct){
         Log.e(LOG_TAG, "FirebaseAuthWithGoogle: " + acct.getId());
 
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -381,6 +381,9 @@ public class LoginActivity extends BaseActivity {
                             Log.d(LOG_TAG, getString(R.string.log_error_occurred) + databaseError.getMessage());
                         }
                     });
+
+                    spe.putString(Constans.KEY_PROVIDER, credential.getProvider()).apply();
+                    spe.putString(Constans.KEY_ENCODED_EMAIL, mEncodedEmail).apply();
 
 
                     showErrorToast("bien hecho");

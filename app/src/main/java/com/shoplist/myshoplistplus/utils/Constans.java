@@ -5,11 +5,12 @@ package com.shoplist.myshoplistplus.utils;
  */
 public final class Constans {
 
-    public static final String KEY_ENCODED_EMAIL = "ENCODED_EMAIL";
+
     public static final String FIREBASE_PROPERTY_TIMESTAMP = "timestamp";
     public static final String FIREBASE_PROPERTY_ITEM_NAME = "itemName";
     public static final String FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED ="timestampLastChanged";
     public static final String FIREBASE_PROPERTY_LIST_NAME = "listName";
+    public static final String FIREBASE_PROPERTY_EMAIL = "email";
 
 
 
@@ -26,6 +27,9 @@ public final class Constans {
     public static final String KEY_LIST_ITEM_NAME = "ITEM_NAME";
     public static final String KEY_LIST_ITEM_ID = "LIST_ITEM_ID";
     public static final String KEY_GOOGLE_EMAIL = "GOOGLE_EMAIL";
+    public static final String KEY_PROVIDER = "PROVIDER";
+    public static final String KEY_ENCODED_EMAIL = "ENCODED_EMAIL";
+    public static final String KEY_LIST_OWNER = "LIST_OWNER";
 
 
     /**

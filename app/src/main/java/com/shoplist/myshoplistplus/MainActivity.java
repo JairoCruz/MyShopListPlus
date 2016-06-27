@@ -8,15 +8,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
+import com.google.firebase.database.ValueEventListener;
 import com.shoplist.myshoplistplus.activeList.AddListDialogFragment;
 import com.shoplist.myshoplistplus.activeList.ShoppingListFragment;
 import com.shoplist.myshoplistplus.meals.MealsFragment;
+import com.shoplist.myshoplistplus.model.User;
+import com.shoplist.myshoplistplus.utils.Constans;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,6 +38,10 @@ public class MainActivity extends BaseActivity {
     @Bind(R.id.pager)
     ViewPager pager;
 
+    private DatabaseReference mUserRef;
+    private ValueEventListener mUserRefListener;
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +52,47 @@ public class MainActivity extends BaseActivity {
         // aun si ver funcionabilidad
        // FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
 
+        /**
+         * Create Firebase references
+         */
+        mUserRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_USERS).child(mEncodedEmail);
+
         initializeScreen();
+
+        /**
+         * Add ValueEventListeners to Firebase references
+         * to control get data and control behavior and visibility of elements
+         */
+
+        /* Estoy recuperando valores de la base de datos user no de Auth */
+        mUserRefListener = mUserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                /**
+                 * Set the activity title to current user name if user is not null
+                 */
+                Log.e("user", user.getName());
+                if(user != null){
+                    /* Assumes that the firest word in the user's name is the user's fiirst name. */
+                    String firstName = user.getName().split("\\s+")[0];
+                    String title = firstName + "'s Lists";
+                    setTitle(title);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(LOG_TAG, "Error en la lectura de datos " + databaseError.getMessage());
+            }
+        });
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mUserRef.removeEventListener(mUserRefListener);
     }
 
     // Este metodo lo utilizo para inicializar los elementos de mi app
