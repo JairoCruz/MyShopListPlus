@@ -3,6 +3,8 @@
     <string name="put_message">Ingresa aqui tu mensage</string>
     <string name="btnEnviar">Enviar</string>
 
+    <string name="action_logout">Logout</string>
+
 
     <string name="paper_title_shopping_lists">Shopping Lists</string>
     <string name="paper_title_meals">Meals</string>
@@ -82,4 +84,5 @@
 
 
     <string name="default_web_client_myId">803823576065-9696b7l6dufdbfntr4u3p1v2koehoedi.apps.googleusercontent.com</string>
+    <string name="action_sort">Sort</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.shoplist.myshoplistplus;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -16,6 +17,10 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.shoplist.myshoplistplus.login.CreateAccountActivity;
+import com.shoplist.myshoplistplus.login.LoginActivity;
 import com.shoplist.myshoplistplus.utils.Constans;
 
 
@@ -24,9 +29,12 @@ import com.shoplist.myshoplistplus.utils.Constans;
  */
 public abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     /* Client used to interact with Google APIs*/
+    private static final String LOG_TAG = BaseActivity.class.getSimpleName();
     protected  GoogleApiClient mGoogleApiClient;
     protected String mEncodedEmail;
     protected String mProvider;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,16 +60,66 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
         /**
          * Getting mProvider and mEncodeEmail from SharedPreferences
          */
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(BaseActivity.this);
+        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(BaseActivity.this);
         /* Get mEncodedEmail and mProvider from SharedPreferences, use null as default value */
         mEncodedEmail = sp.getString(Constans.KEY_ENCODED_EMAIL, null);
         mProvider = sp.getString(Constans.KEY_PROVIDER,null);
 
+        /*if (!((this instanceof LoginActivity) || (this instanceof CreateAccountActivity))){
+            mAuthListener = new FirebaseAuth.AuthStateListener() {
+                @Override
+                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                    if (user == null){
+                        Log.e(LOG_TAG, "Usuario es nulo");
+                        *//* Clear out shared preferences *//*
+                        SharedPreferences.Editor spe = sp.edit();
+                        spe.putString(Constans.KEY_ENCODED_EMAIL,null);
+                        spe.putString(Constans.KEY_PROVIDER, null);
+
+                        takeUserToLoginScreenOnUnAuth();
+                    }
+                    Log.e(LOG_TAG, "Usuario no es nulo y paso por aca");
+                }
+            };
+
+        }*/
+
+
+    }
+
+
+
+    private void takeUserToLoginScreenOnUnAuth(){
+        /* Move user to LoginActivity, and remove the backstack */
+        Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        /*if (mAuthListener != null){
+            mAuth.removeAuthStateListener(mAuthListener);
+        }*/
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        /* Cleanup the AuthStateListener */
+       /* if (!((this instanceof LoginActivity) || (this instanceof CreateAccountActivity))){
+            mAuth.removeAuthStateListener(mAuthListener);
+        }*/
     }
 
     @Override
@@ -81,7 +139,20 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
             super.onBackPressed();
             return true;
         }
+
+        if (id == R.id.action_logout){
+            logout();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    protected void logout(){
+        /* Logout if mProvider is not null */
+        if (mProvider != null){
+            FirebaseAuth.getInstance().signOut();
+        }
     }
 
     protected void initializeBackground(LinearLayout linearLayout){
