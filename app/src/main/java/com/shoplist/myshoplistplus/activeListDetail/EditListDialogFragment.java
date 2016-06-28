@@ -24,6 +24,8 @@ import com.shoplist.myshoplistplus.utils.Constans;
  */
 public abstract  class EditListDialogFragment extends DialogFragment {
 
+    String mEncodedEmail;
+    String mOwner;
     EditText mEditTextForList;
     int mResource;
     String mListId;
@@ -36,10 +38,12 @@ public abstract  class EditListDialogFragment extends DialogFragment {
      * @return
      */
 
-    protected static Bundle newInstanceHelper(ShoppingList shoppingList, int resource, String listId){
+    protected static Bundle newInstanceHelper(ShoppingList shoppingList, int resource, String listId, String encodedEmail){
         Bundle bundle = new Bundle();
         bundle.putString(Constans.KEY_LIST_ID, listId);
         bundle.putInt(Constans.KEY_LAYOUT_RSOURCE, resource);
+        bundle.putString(Constans.KEY_LIST_OWNER, shoppingList.getOwner());
+        bundle.putString(Constans.KEY_ENCODED_EMAIL, encodedEmail);
         return bundle;
     }
 
@@ -50,6 +54,8 @@ public abstract  class EditListDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         mListId = getArguments().getString(Constans.KEY_LIST_ID);
         mResource = getArguments().getInt(Constans.KEY_LAYOUT_RSOURCE);
+        mOwner = getArguments().getString(Constans.KEY_LIST_OWNER);
+        mEncodedEmail = getArguments().getString(Constans.KEY_ENCODED_EMAIL);
     }
 
     /**

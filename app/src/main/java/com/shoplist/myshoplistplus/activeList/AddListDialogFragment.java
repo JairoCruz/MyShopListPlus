@@ -112,7 +112,7 @@ public class AddListDialogFragment extends DialogFragment {
 
     private void addShoppingList() {
         String userEnteredName = mEditTextListName.getText().toString();
-        String owner = "Anonymous Owner";
+
 
 //        If EditText input is not empty
         if (!userEnteredName.equals("")){
@@ -134,7 +134,7 @@ public class AddListDialogFragment extends DialogFragment {
             timestampCreated.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
 
             /* Buil the shopping List */
-            ShoppingList newShoppingList = new ShoppingList(userEnteredName, owner, timestampCreated);
+            ShoppingList newShoppingList = new ShoppingList(userEnteredName, mEncodedEmail, timestampCreated);
 
             /* Add the shopping list */
             newListRef.setValue(newShoppingList);

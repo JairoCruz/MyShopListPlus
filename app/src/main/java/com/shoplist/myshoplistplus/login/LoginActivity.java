@@ -222,6 +222,20 @@ public class LoginActivity extends BaseActivity {
                 if (task.isSuccessful()){
                     mAuthProgressDialog.dismiss();
                     Log.i(LOG_TAG, FirebaseAuthProvider.PROVIDER_ID +  getString(R.string.log_message_auth_successful));
+
+                    AuthResult ar = task.getResult();
+                    mEncodedEmail = Utils.encodeEmail(ar.getUser().getEmail());
+
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor spe = sp.edit();
+
+                    Log.e("jairo email", mEncodedEmail);
+
+                    spe.putString(Constans.KEY_PROVIDER, FirebaseAuthProvider.PROVIDER_ID).apply();
+                    spe.putString(Constans.KEY_ENCODED_EMAIL, mEncodedEmail).apply();
+
+
+
                     /* Go to main Activity */
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

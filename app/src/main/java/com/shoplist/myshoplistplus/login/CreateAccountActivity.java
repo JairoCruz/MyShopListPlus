@@ -20,6 +20,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -132,6 +134,10 @@ public class CreateAccountActivity extends BaseActivity {
                     mAuthProgressDialog.dismiss();
                     Log.i(LOG_TAG, getString(R.string.log_message_auth_successful));
 
+                    FirebaseUser user = task.getResult().getUser();
+
+                    updateUserProfile(user, mUserName);
+
                    /* *//* Create de User Data *//*
                     AuthResult authResult = task.getResult();
                     String uid = authResult.getUser().getUid();*/
@@ -151,6 +157,20 @@ public class CreateAccountActivity extends BaseActivity {
             }
         });
 
+    }
+
+    public void updateUserProfile(FirebaseUser user, String userName){
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(userName)
+                .build();
+        user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Log.e(LOG_TAG, "User profile updated. ");
+                }
+            }
+        });
     }
 
     /**
