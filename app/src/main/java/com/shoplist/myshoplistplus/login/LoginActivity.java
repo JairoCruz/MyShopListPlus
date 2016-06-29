@@ -104,6 +104,11 @@ public class LoginActivity extends BaseActivity {
                 if (user != null) {
                     // User is signed in
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_in: " + user.getUid());
+                    /* Go to main Activity */
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
                 }else{
                     // User is signed out
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_out");
@@ -236,11 +241,11 @@ public class LoginActivity extends BaseActivity {
 
 
 
-                    /* Go to main Activity */
+                    /* Go to main Activity *//*
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
-                    finish();
+                    finish();*/
                 }else {
                     mAuthProgressDialog.dismiss();
                     showErrorToast(task.getException().getMessage());

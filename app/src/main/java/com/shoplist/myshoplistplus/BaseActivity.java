@@ -151,8 +151,9 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     protected void logout(){
         /* Logout if mProvider is not null */
         if (mProvider != null){
-            FirebaseAuth.getInstance().signOut();
+
         }
+        FirebaseAuth.getInstance().signOut();
     }
 
     protected void initializeBackground(LinearLayout linearLayout){
