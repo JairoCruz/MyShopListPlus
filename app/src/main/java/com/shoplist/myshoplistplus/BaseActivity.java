@@ -65,27 +65,6 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
         mEncodedEmail = sp.getString(Constans.KEY_ENCODED_EMAIL, null);
         mProvider = sp.getString(Constans.KEY_PROVIDER,null);
 
-        /*if (!((this instanceof LoginActivity) || (this instanceof CreateAccountActivity))){
-            mAuthListener = new FirebaseAuth.AuthStateListener() {
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-
-                    if (user == null){
-                        Log.e(LOG_TAG, "Usuario es nulo");
-                        *//* Clear out shared preferences *//*
-                        SharedPreferences.Editor spe = sp.edit();
-                        spe.putString(Constans.KEY_ENCODED_EMAIL,null);
-                        spe.putString(Constans.KEY_PROVIDER, null);
-
-                        takeUserToLoginScreenOnUnAuth();
-                    }
-                    Log.e(LOG_TAG, "Usuario no es nulo y paso por aca");
-                }
-            };
-
-        }*/
-
 
     }
 
@@ -116,10 +95,7 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        /* Cleanup the AuthStateListener */
-       /* if (!((this instanceof LoginActivity) || (this instanceof CreateAccountActivity))){
-            mAuth.removeAuthStateListener(mAuthListener);
-        }*/
+
     }
 
     @Override
@@ -149,11 +125,8 @@ public abstract class BaseActivity extends AppCompatActivity implements GoogleAp
 
 
     protected void logout(){
-        /* Logout if mProvider is not null */
-        if (mProvider != null){
-
-        }
         FirebaseAuth.getInstance().signOut();
+        Log.e("Salir", "ya fue presionado");
     }
 
     protected void initializeBackground(LinearLayout linearLayout){

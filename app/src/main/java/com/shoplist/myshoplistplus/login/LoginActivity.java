@@ -37,6 +37,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -112,6 +113,10 @@ public class LoginActivity extends BaseActivity {
                 }else{
                     // User is signed out
                     Log.d(LOG_TAG, "onAuthStateChanged:signed_out");
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor spe = sp.edit();
+                    spe.putString(Constans.KEY_ENCODED_EMAIL, null);
+                    spe.putString(Constans.KEY_PROVIDER, null);
                 }
             }
         };
@@ -358,7 +363,7 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct){
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct){
         Log.e(LOG_TAG, "FirebaseAuthWithGoogle: " + acct.getId());
 
         final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -404,6 +409,14 @@ public class LoginActivity extends BaseActivity {
                     spe.putString(Constans.KEY_PROVIDER, credential.getProvider()).apply();
                     spe.putString(Constans.KEY_ENCODED_EMAIL, mEncodedEmail).apply();
 
+                    /* Una vez que inicio session con el boton de Google  de
+                    * una sola vez actualize el profile de Auth de Firebase, aparte de actualizar mi objeto Users de la database
+                    * asi cuando estoy en el main activity recupero de Auth Firebase los datos de el nombre */
+                    FirebaseUser firebaseUser = task.getResult().getUser();
+                    if (firebaseUser.getDisplayName() == null) {
+                        updateUserProfile(firebaseUser, acct.getDisplayName());
+                    }
+
 
                     showErrorToast("bien hecho");
                     mAuthProgressDialog.dismiss();
@@ -419,6 +432,20 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
+    }
+
+    public void updateUserProfile(FirebaseUser user, String userName){
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(userName)
+                .build();
+        user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Log.e(LOG_TAG, "User profile updated. ");
+                }
+            }
+        });
     }
 
     /**
