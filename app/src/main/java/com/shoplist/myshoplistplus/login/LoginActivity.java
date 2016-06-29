@@ -144,6 +144,24 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor spe = sp.edit();
+        /**
+         * Get the newly registrered user email if present, use null as default value
+         */
+        String signupEmail = sp.getString(Constans.KEY_SIGNUP_EMAIL, null);
+
+        /**
+         * Fill in the email editExt and remove value from SharedPreferences if email is present
+         */
+        if (signupEmail != null){
+            mEditTextEmailInput.setText(signupEmail);
+
+            /**
+             * Clear signupEmail sharedPreferences to make suere that they are used just once
+             */
+            spe.putString(Constans.KEY_SIGNUP_EMAIL, null).apply();
+        }
     }
 
     @Override
@@ -251,6 +269,50 @@ public class LoginActivity extends BaseActivity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();*/
+
+                    userLocation = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_USERS).child(mEncodedEmail);
+
+                    /**
+                     * check if current user has logged in at least once
+                     */
+                    userLocation.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            if (user != null){
+                                /**
+                                 * If recently registered user has hasLoggedInWithPassword = "false"
+                                 * (never logged in using password provider)
+                                 */
+                                if (!user.isHasLoggedInWithPassword()){
+                                    /**
+                                     * Change password if user that just signed in signed up recently
+                                     * to make sure that  user will be able to use temporary password
+                                     * from the email more that 24 hours
+                                     */
+                                    FirebaseUser userUpdatePassword = FirebaseAuth.getInstance().getCurrentUser();
+                                    userUpdatePassword.updatePassword(mEditTextPasswordInput.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()){
+                                                Log.d(LOG_TAG, "User password updated");
+                                                userLocation.child(Constans.FIREBASE_PROPERTY_USER_HAS_LOGGED_IN_WITH_PASSWORD).setValue(true);
+                                                /* the password was changed */
+                                                Log.d(LOG_TAG,getString(R.string.log_message_password_changed_successfully) + mEditTextPasswordInput.getText().toString());
+                                            }else{
+                                                Log.d(LOG_TAG, getString(R.string.log_error_failed_to_change_password));
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.e(LOG_TAG, "Error de lectura" + databaseError.getMessage());
+                        }
+                    });
                 }else {
                     mAuthProgressDialog.dismiss();
                     showErrorToast(task.getException().getMessage());
