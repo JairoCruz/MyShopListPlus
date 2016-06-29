@@ -22,6 +22,7 @@ import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.model.ShoppingListItem;
 import com.shoplist.myshoplistplus.utils.Constans;
+import com.shoplist.myshoplistplus.utils.Utils;
 
 public class ActiveListDetailsActivity extends BaseActivity {
 
@@ -34,6 +35,8 @@ public class ActiveListDetailsActivity extends BaseActivity {
     private String mListId;
     private ActiveListItemAdapter mActiveListItemAdapter;
     private ValueEventListener mActiveListRefListener;
+    /* Stores whether the current user is the owner */
+    private boolean mCurrentUserIsOwner = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +102,9 @@ public class ActiveListDetailsActivity extends BaseActivity {
                  */
                 mActiveListItemAdapter.setShoppingList(mShoppingList);
 
+                /* Check if the current user is owner */
+                mCurrentUserIsOwner = Utils.checkIfOwner(shoppingList, mEncodedEmail);
+
                 /* Calling invalidateOptionsMenu causes onCreateOptionsMenu to be called */
                 invalidateOptionsMenu();
 
@@ -155,8 +161,8 @@ public class ActiveListDetailsActivity extends BaseActivity {
         MenuItem archive = menu.findItem(R.id.action_archive);
 
         /* Only the edit and remove options are implemented */
-        remove.setVisible(true);
-        edit.setVisible(true);
+        remove.setVisible(mCurrentUserIsOwner);
+        edit.setVisible(mCurrentUserIsOwner);
         share.setVisible(false);
         archive.setVisible(false);
         return true;
