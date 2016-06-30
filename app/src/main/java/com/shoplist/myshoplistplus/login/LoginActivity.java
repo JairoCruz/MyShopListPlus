@@ -146,7 +146,7 @@ public class LoginActivity extends BaseActivity {
         super.onResume();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor spe = sp.edit();
-        Log.e(LOG_TAG, "Estoy en onResume");
+        Log.e(LOG_TAG, "Estoy en onResume"+ sp.getString(Constans.KEY_SIGNUP_EMAIL,null));
         /**
          * Get the newly registrered user email if present, use null as default value
          */

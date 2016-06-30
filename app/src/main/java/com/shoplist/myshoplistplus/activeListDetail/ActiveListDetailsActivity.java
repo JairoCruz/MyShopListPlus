@@ -24,6 +24,8 @@ import com.shoplist.myshoplistplus.model.ShoppingListItem;
 import com.shoplist.myshoplistplus.utils.Constans;
 import com.shoplist.myshoplistplus.utils.Utils;
 
+import java.util.HashMap;
+
 public class ActiveListDetailsActivity extends BaseActivity {
 
     private static final String LOG_TAG = ActiveListDetailsActivity.class.getSimpleName();
@@ -31,6 +33,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
     private ShoppingList mShoppingList;
     private DatabaseReference mActiveListRef;
     private DatabaseReference listItemsRef;
+    private DatabaseReference firebaseItemLocation;
     private Toolbar toolbar;
     private String mListId;
     private ActiveListItemAdapter mActiveListItemAdapter;
@@ -68,7 +71,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
         /**
          * Setup the adapter
          */
-        mActiveListItemAdapter = new ActiveListItemAdapter(this, ShoppingListItem.class, R.layout.single_active_list_item, listItemsRef, mListId);
+        mActiveListItemAdapter = new ActiveListItemAdapter(this, ShoppingListItem.class, R.layout.single_active_list_item, listItemsRef, mListId, mEncodedEmail);
         /* Create ActiveListItemAdapter and set to listView */
         mListView.setAdapter(mActiveListItemAdapter);
 
@@ -142,6 +145,40 @@ public class ActiveListDetailsActivity extends BaseActivity {
                     }
                 }
                 return false;
+            }
+        });
+
+        /* Perform buy/return action on listView item click event if current user is shopping. */
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                /* Check that the view is not the empty footer item */
+                if (view.getId() != R.id.list_view_footer_empty){
+                    final ShoppingListItem selectedListItem = mActiveListItemAdapter.getItem(position);
+                    String itemId = mActiveListItemAdapter.getRef(position).getKey();
+
+                    if (selectedListItem != null){
+                        /* Create map and fill it in with deep path multi write operations list */
+                        HashMap<String, Object> updatedItemBoughtData = new HashMap<String, Object>();
+                        /* Buy selected item if it is NOT already bought */
+                        if (!selectedListItem.isBought()){
+                            updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT, true);
+                            updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT_BY, mEncodedEmail);
+                        }else{
+                            updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT, false);
+                            updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT_BY, null);
+                        }
+                        firebaseItemLocation = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS).child(mListId).child(itemId);
+                        firebaseItemLocation.updateChildren(updatedItemBoughtData, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                if (databaseError != null){
+                                    Log.d(LOG_TAG, "Error al actualizar datos" + databaseError.getMessage());
+                                }
+                            }
+                        });
+                    }
+                }
             }
         });
     }

@@ -185,7 +185,7 @@ public class CreateAccountActivity extends BaseActivity {
                             if (task.isSuccessful()){
                                 Log.d(LOG_TAG, "Email sent.");
                                 /* Dismiss the progress dialog */
-                                mAuthProgressDialog.dismiss();
+
 
                                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(CreateAccountActivity.this);
                                 SharedPreferences.Editor spe = sp.edit();
@@ -195,7 +195,8 @@ public class CreateAccountActivity extends BaseActivity {
                                  * when the registrered user will sign in for the first time
                                  */
                                 spe.putString(Constans.KEY_SIGNUP_EMAIL, mUserEmail).apply();
-
+                                Log.e(LOG_TAG, mUserEmail);
+                                mAuthProgressDialog.dismiss();
 
                             }
                         }
