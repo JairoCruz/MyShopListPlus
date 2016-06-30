@@ -52,6 +52,7 @@ public class CreateAccountActivity extends BaseActivity {
     private String mUserEmail;
     private String mPassword;
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference userLocation;
     private SecureRandom mRandom = new SecureRandom();
 
@@ -69,6 +70,21 @@ public class CreateAccountActivity extends BaseActivity {
          * Link layout elements form XML and setup the progress dialog
          */
         initializeScreen();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null){
+                    Log.d(LOG_TAG, "usuario se logego");
+                }else{
+                    Intent intent = new Intent(CreateAccountActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        };
     }
 
     @Override
@@ -92,6 +108,20 @@ public class CreateAccountActivity extends BaseActivity {
         mAuthProgressDialog.setTitle(getResources().getString(R.string.progress_dialog_loading));
         mAuthProgressDialog.setMessage(getResources().getString(R.string.progress_dialog_check_inbox));
         mAuthProgressDialog.setCancelable(false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+       //  mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuthListener != null){
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 
     /**
@@ -143,6 +173,10 @@ public class CreateAccountActivity extends BaseActivity {
                     FirebaseUser user = task.getResult().getUser();
 
                     updateUserProfile(user, mUserName);
+                    /* *//* Create de User Data *//*
+                    AuthResult authResult = task.getResult();
+                    String uid = authResult.getUser().getUid();*/
+                    createUserInFirebaseHelper();
 
                     /* Reset Password */
                     mAuth.sendPasswordResetEmail(user.getEmail()).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -161,14 +195,13 @@ public class CreateAccountActivity extends BaseActivity {
                                  * when the registrered user will sign in for the first time
                                  */
                                 spe.putString(Constans.KEY_SIGNUP_EMAIL, mUserEmail).apply();
+
+
                             }
                         }
                     });
 
-                   /* *//* Create de User Data *//*
-                    AuthResult authResult = task.getResult();
-                    String uid = authResult.getUser().getUid();*/
-                    createUserInFirebaseHelper();
+
 
                     /**
                      * Password reset email sent, open app chooser to pick app
@@ -178,14 +211,16 @@ public class CreateAccountActivity extends BaseActivity {
                     intent.addCategory(Intent.CATEGORY_APP_EMAIL);
 
                     try{
+                        Log.e(LOG_TAG,"voy saliendo de aqui");
+                        /* If successful create user then log out */
+                        FirebaseAuth.getInstance().signOut();
                         startActivity(intent);
                         finish();
                     }catch (android.content.ActivityNotFoundException ex){
                         Log.e("error en abrir email", ex.getMessage());
                     }
 
-                    /* If successful create user then log out */
-                    FirebaseAuth.getInstance().signOut();
+
                 }else{
                     /* Error occurred, log the error and dismiss the progress dialog */
                     mAuthProgressDialog.dismiss();
@@ -233,12 +268,15 @@ public class CreateAccountActivity extends BaseActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 /* If there is no user, make one */
                 if (dataSnapshot.getValue() == null){
+                    Log.e("Desde el creado objeto","voy aqui");
                     /* Set raw version of date to the ServerValue.TIMESTAMP value and save into dateCreatedMap */
                     HashMap<String, Object> timestampJoined = new HashMap<>();
                     timestampJoined.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
 
                     User newUser = new User(mUserName, encodedEmail, timestampJoined);
                     userLocation.setValue(newUser);
+                }else{
+                    Log.e("crear","no");
                 }
             }
 
