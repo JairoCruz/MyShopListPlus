@@ -1,15 +1,18 @@
 package com.shoplist.myshoplistplus.activeListDetail;
 
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +24,7 @@ import com.shoplist.myshoplistplus.BaseActivity;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.model.ShoppingListItem;
+import com.shoplist.myshoplistplus.model.User;
 import com.shoplist.myshoplistplus.utils.Constans;
 import com.shoplist.myshoplistplus.utils.Utils;
 
@@ -34,10 +38,16 @@ public class ActiveListDetailsActivity extends BaseActivity {
     private DatabaseReference mActiveListRef;
     private DatabaseReference listItemsRef;
     private DatabaseReference firebaseItemLocation;
+    private DatabaseReference mCurrentUserRef;
     private Toolbar toolbar;
     private String mListId;
     private ActiveListItemAdapter mActiveListItemAdapter;
     private ValueEventListener mActiveListRefListener;
+    private ValueEventListener mCurrentUserRefListener;
+    private Button mButtonShopping;
+    private User mCurrentUser;
+    /* Stores whether the current user is shopping */
+    private boolean mShopping = false;
     /* Stores whether the current user is the owner */
     private boolean mCurrentUserIsOwner = false;
 
@@ -50,7 +60,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
         /* Get the push ID from the extra passed by ShoppingListFragment */
         Intent intent = this.getIntent();
         mListId = intent.getStringExtra(Constans.KEY_LIST_ID);
-        if (mListId == null){
+        if (mListId == null) {
             finish();
             return;
         }
@@ -60,7 +70,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
          */
         mActiveListRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS).child(mListId);
         listItemsRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS).child(mListId);
-
+        mCurrentUserRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_USERS).child(mEncodedEmail);
 
         /**
          *  Link layout elements from XML and setup the toolbar
@@ -76,6 +86,28 @@ public class ActiveListDetailsActivity extends BaseActivity {
         mListView.setAdapter(mActiveListItemAdapter);
 
 
+        /**
+         * Add ValueEventListener to Firebase references
+         * to control get data and control behavior and visibility of elements
+         */
+
+        /* Save the most up-to-date version of current user in mCurrentUser */
+        mCurrentUserRefListener = mCurrentUserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User currentUser = dataSnapshot.getValue(User.class);
+                if (currentUser != null) mCurrentUser = currentUser;
+                else finish();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(LOG_TAG, "Error en la lectura de datos" + databaseError.getMessage());
+            }
+        });
+
+        final Activity thisActivity = this;
+
 
         mActiveListRefListener = mActiveListRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -87,9 +119,9 @@ public class ActiveListDetailsActivity extends BaseActivity {
                  */
                 ShoppingList shoppingList = dataSnapshot.getValue(ShoppingList.class);
 
-                if (shoppingList == null){
+                if (shoppingList == null) {
                     // Method from Activity
-                    Log.e("error","pase");
+                    Log.e("error", "pase");
                     finish();
                     /**
                      * Make sure to call return, otherwise the rest of the method will execute,
@@ -114,6 +146,18 @@ public class ActiveListDetailsActivity extends BaseActivity {
                 /* Set title appropriately */
                 setTitle(shoppingList.getListName());
 
+
+                HashMap<String, User> usersShopping = mShoppingList.getUsersShopping();
+                if (usersShopping != null && usersShopping.size() != 0 && usersShopping.containsKey(mEncodedEmail)) {
+                    mShopping = true;
+                    mButtonShopping.setText(getString(R.string.button_stop_shopping));
+                    mButtonShopping.setBackgroundColor(ContextCompat.getColor(ActiveListDetailsActivity.this, R.color.dark_grey));
+                } else {
+                    mButtonShopping.setText(getString(R.string.button_start_shopping));
+                    mButtonShopping.setBackgroundColor(ContextCompat.getColor(ActiveListDetailsActivity.this, R.color.colorPrimaryDark));
+                    mShopping = false;
+                }
+
             }
 
             @Override
@@ -132,11 +176,11 @@ public class ActiveListDetailsActivity extends BaseActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                /* Check that the view is not the empty foter item */
-                if (view.getId() != R.id.list_view_footer_empty){
+                if (view.getId() != R.id.list_view_footer_empty) {
 
                     ShoppingListItem shoppingListItem = mActiveListItemAdapter.getItem(position);
 
-                    if (shoppingListItem != null){
+                    if (shoppingListItem != null) {
                         String itemName = shoppingListItem.getItemName();
                         String itemId = mActiveListItemAdapter.getRef(position).getKey();
 
@@ -153,30 +197,38 @@ public class ActiveListDetailsActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 /* Check that the view is not the empty footer item */
-                if (view.getId() != R.id.list_view_footer_empty){
+                if (view.getId() != R.id.list_view_footer_empty) {
                     final ShoppingListItem selectedListItem = mActiveListItemAdapter.getItem(position);
                     String itemId = mActiveListItemAdapter.getRef(position).getKey();
 
-                    if (selectedListItem != null){
-                        /* Create map and fill it in with deep path multi write operations list */
-                        HashMap<String, Object> updatedItemBoughtData = new HashMap<String, Object>();
-                        /* Buy selected item if it is NOT already bought */
-                        if (!selectedListItem.isBought()){
-                            updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT, true);
-                            updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT_BY, mEncodedEmail);
-                        }else{
-                            updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT, false);
-                            updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT_BY, null);
-                        }
-                        firebaseItemLocation = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS).child(mListId).child(itemId);
-                        firebaseItemLocation.updateChildren(updatedItemBoughtData, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                if (databaseError != null){
-                                    Log.d(LOG_TAG, "Error al actualizar datos" + databaseError.getMessage());
-                                }
+                    if (selectedListItem != null) {
+
+                        /* If current user is shopping */
+                        if (mShopping) {
+
+                            /* Create map and fill it in with deep path multi write operations list */
+                            HashMap<String, Object> updatedItemBoughtData = new HashMap<String, Object>();
+                            /* Buy selected item if it is NOT already bought */
+                            if (!selectedListItem.isBought()) {
+                                updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT, true);
+                                updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT_BY, mEncodedEmail);
+                            } else {
+                                updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT, false);
+                                updatedItemBoughtData.put(Constans.FIREBASE_PROPERTY_BOUGHT_BY, null);
                             }
-                        });
+
+                        /* Do update */
+                            firebaseItemLocation = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS).child(mListId).child(itemId);
+                            firebaseItemLocation.updateChildren(updatedItemBoughtData, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
+                                        Log.d(LOG_TAG, "Error al actualizar datos" + databaseError.getMessage());
+                                    }
+                                }
+                            });
+
+                        }
                     }
                 }
             }
@@ -210,24 +262,24 @@ public class ActiveListDetailsActivity extends BaseActivity {
         int id = item.getItemId();
 
         /* Show edit list dialog when the edit action is selected */
-        if (id == R.id.action_edit_list_name){
+        if (id == R.id.action_edit_list_name) {
             showEditListNameDialog();
             return true;
         }
 
         /* removeList() when the remove action is selected */
-        if (id == R.id.action_remove_list){
+        if (id == R.id.action_remove_list) {
             removeList();
             return true;
         }
 
         /* Eventually we'll add this */
-        if (id == R.id.action_share_list){
+        if (id == R.id.action_share_list) {
             return true;
         }
 
         /* archiveList() when the archive action is selected */
-        if(id == R.id.action_archive){
+        if (id == R.id.action_archive) {
             archiveList();
             return true;
         }
@@ -239,12 +291,13 @@ public class ActiveListDetailsActivity extends BaseActivity {
         super.onDestroy();
         mActiveListItemAdapter.cleanup();
         mActiveListRef.removeEventListener(mActiveListRefListener);
+        mCurrentUserRef.removeEventListener(mCurrentUserRefListener);
     }
 
     /**
      * Archive current list when user selects "Archive" menu item
      */
-    public void archiveList(){
+    public void archiveList() {
 
     }
 
@@ -252,7 +305,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
      * Start AddItemsFromMealActivity to add meal ingredients into the shopping list
      * when the user taps on "add meal" fab
      */
-    public void addMeal(View view){
+    public void addMeal(View view) {
 
     }
 
@@ -266,15 +319,15 @@ public class ActiveListDetailsActivity extends BaseActivity {
     }
 
 
-
     private void initializeScreen() {
         mListView = (ListView) findViewById(R.id.list_view_shopping_list_items);
+        mButtonShopping = (Button) findViewById(R.id.button_shopping);
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         /* Common toolbar setup */
         setSupportActionBar(toolbar);
 
         /* Add back button to the action bar */
-        if (getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -297,16 +350,35 @@ public class ActiveListDetailsActivity extends BaseActivity {
     /**
      * Show the add list item dialog when user taps "add list item" fab
      */
-    public void showAddListItemDialog(View view){
+    public void showAddListItemDialog(View view) {
         /* Create an instance of the dialog fragment and show it */
         DialogFragment dialog = AddListItemDialogFragment.newInstance(mShoppingList, mListId, mEncodedEmail);
         dialog.show(getFragmentManager(), "AddListItemDialogFragment");
     }
 
-    public void showEditListItemNameDialog(String itemName, String itemId){
+    public void showEditListItemNameDialog(String itemName, String itemId) {
         /* Create an instance of the dialog fragment and show it */
-       DialogFragment dialog = EditListItemNameDialogFragment.newInstance(mShoppingList, itemName, itemId, mListId, mEncodedEmail);
+        DialogFragment dialog = EditListItemNameDialogFragment.newInstance(mShoppingList, itemName, itemId, mListId, mEncodedEmail);
 
-        dialog.show(this.getFragmentManager(),"EditListItemNameDialogFragment");
+        dialog.show(this.getFragmentManager(), "EditListItemNameDialogFragment");
+    }
+
+    /**
+     * This method is called when user taps "Start/Stop Shopping" button
+     */
+    public void toggleShopping(View view){
+        /**
+         * If current user is already shopping, remove current user from usersShopping map
+         */
+        DatabaseReference usersShoppingRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS)
+                .child(mListId).child(Constans.FIREBASE_PROPERTY_USERS_SHOPPING)
+                .child(mEncodedEmail);
+
+        /* Either add or remove the current user form the usersShopping map */
+        if (mShopping){
+            usersShoppingRef.removeValue();
+        }else{
+            usersShoppingRef.setValue(mCurrentUser);
+        }
     }
 }
