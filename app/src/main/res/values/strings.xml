@@ -96,4 +96,21 @@
     <string name="text_other_and_number_are_shopping">%1$s and %2$s others are  shopping</string>
     <string name="person_shopping">%d person shopping</string>
     <string name="people_shopping">%d people shopping</string>
+    <string name="text_add_friend">Add New Friend</string>
+    <string name="hint_enter_friends_email">Enter your friend\\\'s email</string>
+    <string name="pref_title_sort_lists">Lists ordering</string>
+
+    <!-- Ordering Choices Labels : Lists -->
+    <string name="pref_sort_list_label_sortType">Order by</string>
+    <string name="pref_sort_list_label_publish_time_entry">Publish Time</string>
+    <string name="pref_sort_list_label_list_name_entry">List Name</string>
+    <string name="pref_sort_list_label_owner_entry">Owner Email</string>
+    <string name="pref_sort_list_label_most_recently_changed_entry">Most Recently Changed</string>
+
+    <!-- Values -->
+    <string name="sort_by_publish_time_value">orderByPushKey</string>
+    <string name="sort_by_list_name_value">listName</string>
+    <string name="sort_by_owner_value">owner</string>
+    <string name="sort_by_most_recently_changed_value">timestampLastChangedReverse/timestamp</string>
+    <string name="pref_name_sort_order_lists">pref_sort_order_lists</string>
 </resources>
