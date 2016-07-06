@@ -38,9 +38,10 @@ public class ShoppingListFragment extends Fragment {
     * Right now there are not arguments...but eventually there will be
     * */
 
-    public static ShoppingListFragment newInstance(String mEncodedEmail) {
+    public static ShoppingListFragment newInstance(String encodedEmail) {
         ShoppingListFragment fragment = new ShoppingListFragment();
         Bundle args = new Bundle();
+        args.putString(Constans.KEY_ENCODED_EMAIL, encodedEmail);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,6 +53,7 @@ public class ShoppingListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            mEncodeEmail = getArguments().getString(Constans.KEY_ENCODED_EMAIL);
         }
 
     }
@@ -79,7 +81,7 @@ public class ShoppingListFragment extends Fragment {
          *
          */
 
-        mActiveListAdapter = new ActiveListAdapter(getActivity(), ShoppingList.class, R.layout.single_active_list, activeListsRef);
+        mActiveListAdapter = new ActiveListAdapter(getActivity(), ShoppingList.class, R.layout.single_active_list, activeListsRef, mEncodeEmail);
 
         /**
          * Set the adapter to the mListView

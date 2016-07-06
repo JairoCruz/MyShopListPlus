@@ -1,14 +1,22 @@
 package com.shoplist.myshoplistplus.activeList;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
+import com.shoplist.myshoplistplus.model.User;
+import com.shoplist.myshoplistplus.utils.Constans;
 
 /**
  * Created by TSE on 03/06/2016.
@@ -17,12 +25,15 @@ import com.shoplist.myshoplistplus.model.ShoppingList;
 // Populates the list_view_active_list inside ShoppingListFragment
 public class ActiveListAdapter extends FirebaseListAdapter<ShoppingList> {
 
+    private String mEncodedEmail;
+
 
     /**
      * Public constructor that initializes private instance variables when adapter is created
      */
-    public ActiveListAdapter(Activity activity, Class<ShoppingList> modelClass, int modelLayout, Query ref) {
+    public ActiveListAdapter(Activity activity, Class<ShoppingList> modelClass, int modelLayout, Query ref, String encodedEmail) {
         super(activity, modelClass, modelLayout, ref);
+        this.mEncodedEmail = encodedEmail;
         this.mActivity = activity;
     }
 
@@ -37,11 +48,57 @@ public class ActiveListAdapter extends FirebaseListAdapter<ShoppingList> {
          * Grab the needed Textivews and strings
          */
         TextView textViewListName = (TextView) v.findViewById(R.id.text_view_list_name);
-        TextView textViewCreatedByUser = (TextView) v.findViewById(R.id.text_view_created_by_user);
+        final TextView textViewCreatedByUser = (TextView) v.findViewById(R.id.text_view_created_by_user);
+        final TextView textViewUsersShopping = (TextView) v.findViewById(R.id.text_view_people_shopping_count);
+
+        String ownerEmail = model.getOwner();
 
         /* Set the list name and owner */
         textViewListName.setText(model.getListName());
-        textViewCreatedByUser.setText(model.getOwner());
+        /**
+         * Show "1 person is shopping" if one person is shopping
+         * Show "N people shopping" if two or more users are shopping"
+         * Show nothing if nobody is shopping
+         */
+        if (model.getUsersShopping() != null){
+            int usersShopping = model.getUsersShopping().size();
+            if (usersShopping == 1){
+                textViewUsersShopping.setText(String.format(mActivity.getResources().getString(R.string.person_shopping), usersShopping));
+            }else {
+                textViewUsersShopping.setText(String.format(mActivity.getResources().getString(R.string.people_shopping), usersShopping));
+            }
+        }else {
+            /* otherwise show nothing */
+            textViewUsersShopping.setText("");
+        }
+
+        /**
+         * Set "Created by" text to "You" if current user is owner of the list
+         * Set "Created by" text to userName if current user is NOT owner of the list
+         */
+        if (ownerEmail != null){
+            if (ownerEmail.equals(mEncodedEmail)){
+                textViewCreatedByUser.setText(mActivity.getResources().getString(R.string.text_you));
+            }else{
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_USERS).child(ownerEmail);
+                /* Get the user's name */
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+
+                        if (user != null){
+                            textViewCreatedByUser.setText(user.getName());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(mActivity.getClass().getSimpleName(), "Error de lectura de datos" + databaseError.getMessage());
+                    }
+                });
+            }
+        }
 
     }
 }
