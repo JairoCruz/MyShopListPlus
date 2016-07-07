@@ -2,8 +2,11 @@ package com.shoplist.myshoplistplus.activeList;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.ListView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.activeListDetail.ActiveListDetailsActivity;
 import com.shoplist.myshoplistplus.model.ShoppingList;
@@ -70,24 +74,6 @@ public class ShoppingListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_shopping_list, container, false);
         initializeScreen(rootView);
 
-        /**
-         * Create Firebase references
-         */
-        activeListsRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS);
-
-        /**
-         * Create the adapter, giving it the activity, model class, layout for each row in the
-         * list and finally, a reference to the Firebase location with the list data.
-         *
-         */
-
-        mActiveListAdapter = new ActiveListAdapter(getActivity(), ShoppingList.class, R.layout.single_active_list, activeListsRef, mEncodeEmail);
-
-        /**
-         * Set the adapter to the mListView
-         */
-        mListView.setAdapter(mActiveListAdapter);
-
 
         /**
          * Set interactive bits, such as click events and adapters
@@ -115,6 +101,43 @@ public class ShoppingListFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    /**
+     * Updates the order of mListView onResume to handle sortOrderChanges properly
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortOrder = sharedPref.getString(Constans.KEY_PREF_SORT_ORDER_LISTS, Constans.ORDER_BY_KEY);
+        Log.e("OderBy", sortOrder);
+
+        Query orderedActiveUserListsRef;
+        DatabaseReference activeListsRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS);
+        /**
+         * Sort active lists by "date created"
+         * if it's been selected in the SettingsActivity
+         */
+        if (sortOrder.equals(Constans.ORDER_BY_KEY)){
+            orderedActiveUserListsRef = activeListsRef.orderByKey();
+        }else{
+            /**
+             * Sort active by lists by name or datelastChanged. Otherwise
+             * depending o what's been selected in SettingsActivity
+             */
+            orderedActiveUserListsRef = activeListsRef.orderByChild(sortOrder);
+        }
+
+        /**
+         * Create the adapter with selected sort order
+         */
+        mActiveListAdapter = new ActiveListAdapter(getActivity(), ShoppingList.class, R.layout.single_active_list, orderedActiveUserListsRef, mEncodeEmail);
+
+        /**
+         * Set the adapter to the mListView
+         */
+        mListView.setAdapter(mActiveListAdapter);
     }
 
     /**

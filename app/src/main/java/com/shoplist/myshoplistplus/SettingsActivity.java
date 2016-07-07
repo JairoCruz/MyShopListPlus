@@ -1,11 +1,15 @@
 package com.shoplist.myshoplistplus;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import com.shoplist.myshoplistplus.utils.Constans;
 
 /**
  * Created by TSE on 06/07/2016.
@@ -35,6 +39,7 @@ public class SettingsActivity extends PreferenceActivity {
             /**
              * Bind preference summary to value for lists and meals sorting list preferences
              */
+            Log.e("find preferencia", "Esto es " + findPreference(getString(R.string.pref_name_sort_order_lists)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_name_sort_order_lists)));
         }
 
@@ -49,6 +54,9 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             setPreferenceSummary(preference, newValue);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor spe = sharedPref.edit();
+            spe.putString(Constans.KEY_PREF_SORT_ORDER_LISTS, newValue.toString()).apply();
             return true;
         }
 

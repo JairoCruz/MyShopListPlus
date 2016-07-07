@@ -35,10 +35,17 @@ public final class Constans {
     public static final String KEY_ENCODED_EMAIL = "ENCODED_EMAIL";
     public static final String KEY_LIST_OWNER = "LIST_OWNER";
     public static final String KEY_SIGNUP_EMAIL = "SIGNUP_EMAIL";
+    public static final String KEY_PREF_SORT_ORDER_LISTS = "PREF_SORT_ORDER_LISTS";
 
 
     /**
      * Constants for Firebase login
      */
     public static final String PROVIDER_DATA_DISPLAY_NAME = "displayName";
+
+    /**
+     * Constant for sorting
+     */
+    public static final String ORDER_BY_KEY = "orderByPushKey";
+    public static final String ORDER_BY_OWNER_EMAIL = "orderByOwnerEmail";
 }

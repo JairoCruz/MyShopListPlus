@@ -46,8 +46,9 @@
         </activity>
         <activity android:name=".login.CreateAccountActivity" />
         <activity android:name=".sharing.AddFriendActivity" />
-        <activity android:name=".sharing.AutocompleteFriendAdapter" />
         <activity android:name=".sharing.ShareListActivity"></activity>
+        <activity android:name=".SettingsActivity"
+            android:label="@string/action_settings"/>
     </application>
 
 </manifest>
