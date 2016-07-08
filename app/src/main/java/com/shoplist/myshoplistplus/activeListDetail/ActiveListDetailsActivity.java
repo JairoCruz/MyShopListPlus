@@ -88,7 +88,6 @@ public class ActiveListDetailsActivity extends BaseActivity {
         /* Create ActiveListItemAdapter and set to listView */
         mListView.setAdapter(mActiveListItemAdapter);
 
-
         /**
          * Add ValueEventListener to Firebase references
          * to control get data and control behavior and visibility of elements
