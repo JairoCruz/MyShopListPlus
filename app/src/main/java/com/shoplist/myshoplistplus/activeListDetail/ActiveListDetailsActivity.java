@@ -84,7 +84,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
         /**
          * Setup the adapter
          */
-        mActiveListItemAdapter = new ActiveListItemAdapter(this, ShoppingListItem.class, R.layout.single_active_list_item, listItemsRef, mListId, mEncodedEmail);
+        mActiveListItemAdapter = new ActiveListItemAdapter(this, ShoppingListItem.class, R.layout.single_active_list_item,listItemsRef.orderByChild(Constans.FIREBASE_PROPERTY_BOUGHT_BY), mListId, mEncodedEmail);
         /* Create ActiveListItemAdapter and set to listView */
         mListView.setAdapter(mActiveListItemAdapter);
 
