@@ -114,7 +114,7 @@ public class ShoppingListFragment extends Fragment {
         Log.e("OderBy", sortOrder);
 
         Query orderedActiveUserListsRef;
-        DatabaseReference activeListsRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS);
+        DatabaseReference activeListsRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_USER_LISTS).child(mEncodeEmail);
         /**
          * Sort active lists by "date created"
          * if it's been selected in the SettingsActivity

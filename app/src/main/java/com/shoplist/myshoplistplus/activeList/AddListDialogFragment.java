@@ -13,14 +13,17 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.utils.Constans;
+import com.shoplist.myshoplistplus.utils.Utils;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by TSE on 03/06/2016.
@@ -116,15 +119,22 @@ public class AddListDialogFragment extends DialogFragment {
 
 //        If EditText input is not empty
         if (!userEnteredName.equals("")){
-//            Create Firebase references
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference(Constans.FIREBASE_LOCATION_ACTIVE_LISTS);
+           /*Create Firebase references*/
 
-           /* Create a new reference */
-            DatabaseReference newListRef = myRef.push();
+           DatabaseReference userListRef = FirebaseDatabase.getInstance().getReference(Constans.FIREBASE_LOCATION_USER_LISTS).child(mEncodedEmail);
+            final DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference newListRef = userListRef.push();
+
+
 
             /* Save listsRef.push to maintain same randow Id */
             final String listId = newListRef.getKey();
+
+
+            /**
+             * HasMap for data to update
+             */
+            HashMap<String, Object> updateShoppingListData = new HashMap<>();
 
             /**
              * Set raw version of date to the ServerValue.TIMESTAMP value and save into
@@ -136,8 +146,10 @@ public class AddListDialogFragment extends DialogFragment {
             /* Buil the shopping List */
             ShoppingList newShoppingList = new ShoppingList(userEnteredName, mEncodedEmail, timestampCreated);
 
-            /* Add the shopping list */
-            newListRef.setValue(newShoppingList);
+           HashMap<String, Object> shoppingListMap = (HashMap<String, Object>) new ObjectMapper().convertValue(newShoppingList, Map.class);
+            Utils.updateMapForAllWithValue(listId, mEncodedEmail, updateShoppingListData, "", shoppingListMap);
+
+            firebaseRef.updateChildren(updateShoppingListData);
 
             /* Form short set method push() and setvalue()*/
             /* myRef.push().setValue(newShoppingList); */

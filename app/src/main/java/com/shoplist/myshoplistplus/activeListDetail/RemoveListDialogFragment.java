@@ -13,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.utils.Constans;
+import com.shoplist.myshoplistplus.utils.Utils;
 
 import java.util.HashMap;
 
@@ -26,7 +27,7 @@ import java.util.HashMap;
 public class RemoveListDialogFragment extends DialogFragment {
 
     String mListId;
-    private DatabaseReference listToRemoveRef;
+    String mListOwner;
     final static String LOG_TAG = RemoveListDialogFragment.class.getSimpleName();
 
 
@@ -37,6 +38,7 @@ public class RemoveListDialogFragment extends DialogFragment {
         RemoveListDialogFragment removeListDialogFragment = new RemoveListDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constans.KEY_LIST_ID, listId);
+        bundle.putString(Constans.KEY_LIST_OWNER, shoppingList.getOwner());
         removeListDialogFragment.setArguments(bundle);
         return removeListDialogFragment;
     }
@@ -49,6 +51,7 @@ public class RemoveListDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         // Recupero el valor del bundle pasado a traves de newInstanceHelper
         mListId = getArguments().getString(Constans.KEY_LIST_ID);
+        mListOwner = getArguments().getString(Constans.KEY_LIST_OWNER);
     }
 
     @Override
@@ -74,19 +77,21 @@ public class RemoveListDialogFragment extends DialogFragment {
     }
 
     private void removeList(){
+        DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference();
+
         /**
          * Create map and fill it in with deep path multi write operations list
          */
         HashMap<String, Object> removeListData = new HashMap<String, Object>();
 
-        removeListData.put("/" + Constans.FIREBASE_LOCATION_ACTIVE_LISTS + "/" + mListId, null);
+       /* Remove the ShoppingList from both user lists and active lists */
+        Utils.updateMapForAllWithValue(mListId, mListOwner, removeListData, "", null);
 
+        /* Remove the associdated list items */
         removeListData.put("/" + Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId, null);
 
-        listToRemoveRef = FirebaseDatabase.getInstance().getReference();
-
         /* do a deep-path update */
-        listToRemoveRef.updateChildren(removeListData, new DatabaseReference.CompletionListener() {
+        firebaseRef.updateChildren(removeListData, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null){

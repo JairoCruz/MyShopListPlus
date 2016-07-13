@@ -12,6 +12,7 @@ import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.model.ShoppingListItem;
 import com.shoplist.myshoplistplus.utils.Constans;
+import com.shoplist.myshoplistplus.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,12 +83,9 @@ public class AddListItemDialogFragment extends EditListDialogFragment {
             /* Add the item to the update map */
             updateItemToAddMap.put("/" + Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId + "/" + itemId, itemToAdd);
 
-            /* Make the timestamp for last changed */
-            HashMap<String, Object> changedTimestampMap = new HashMap<>();
-            changedTimestampMap.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
 
-            /* Add the update timestamp */
-            updateItemToAddMap.put("/" + Constans.FIREBASE_LOCATION_ACTIVE_LISTS + "/" + mListId + "/" + Constans.FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED, changedTimestampMap);
+            /* Update affected lists timestamps */
+            Utils.updateMapWithTimestampLastChanged(mListId, mOwner, updateItemToAddMap);
 
             /* Do the update */
             firebaseRef.updateChildren(updateItemToAddMap);

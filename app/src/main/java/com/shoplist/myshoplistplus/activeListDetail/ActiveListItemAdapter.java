@@ -22,6 +22,7 @@ import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.model.ShoppingListItem;
 import com.shoplist.myshoplistplus.model.User;
 import com.shoplist.myshoplistplus.utils.Constans;
+import com.shoplist.myshoplistplus.utils.Utils;
 
 import java.util.HashMap;
 
@@ -181,12 +182,9 @@ public class ActiveListItemAdapter extends FirebaseListAdapter<ShoppingListItem>
         /* Remove the item by passing null */
         updatedRemoveItemMap.put("/" + Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId + "/" + itemId, null);
 
-        /* Make the timestamp for last changed */
-        HashMap<String, Object> changedTimestampMap = new HashMap<>();
-        changedTimestampMap.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
 
         /* Add the updated timestamp */
-        updatedRemoveItemMap.put("/" + Constans.FIREBASE_LOCATION_ACTIVE_LISTS + "/" + mListId + "/" + Constans.FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED, changedTimestampMap);
+        Utils.updateMapWithTimestampLastChanged(mListId, mShoppingList.getOwner(), updatedRemoveItemMap);
 
         /* Do the update */
         firebaseRef.updateChildren(updatedRemoveItemMap);

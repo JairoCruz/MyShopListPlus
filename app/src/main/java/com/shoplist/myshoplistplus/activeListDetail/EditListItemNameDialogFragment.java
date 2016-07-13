@@ -9,6 +9,7 @@ import com.google.firebase.database.ServerValue;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.utils.Constans;
+import com.shoplist.myshoplistplus.utils.Utils;
 
 import java.util.HashMap;
 
@@ -73,21 +74,18 @@ public class EditListItemNameDialogFragment extends EditListDialogFragment {
         if (!nameInput.equals("") && !nameInput.equals(mItemName)){
             DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference();
 
-            /* Make a map for the item you are editing the name of */
-            HashMap<String, Object> updatedItemToAddMap = new HashMap<String, Object>();
+            /* Make a map for the item you are changing the name of */
+            HashMap<String, Object> updatedDataItemToEditMap = new HashMap<String, Object>();
 
             /* Add the new name to the update map */
-            updatedItemToAddMap.put("/" + Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId + "/" + mItemId + "/" + Constans.FIREBASE_PROPERTY_ITEM_NAME, nameInput);
+            updatedDataItemToEditMap.put("/" + Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId + "/" + mItemId + "/" + Constans.FIREBASE_PROPERTY_ITEM_NAME, nameInput);
 
-            /* Make the timestamp for last changed */
-            HashMap<String, Object> changedTiemestampMap = new HashMap<>();
-            changedTiemestampMap.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
 
-            /* Add the updated timestamp */
-            updatedItemToAddMap.put("/" + Constans.FIREBASE_LOCATION_ACTIVE_LISTS + "/" + mListId + "/" + Constans.FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED, changedTiemestampMap);
+            /* Update affected lists timestamps */
+            Utils.updateMapWithTimestampLastChanged(mListId, mOwner, updatedDataItemToEditMap);
 
             /* Do the update */
-            firebaseRef.updateChildren(updatedItemToAddMap);
+            firebaseRef.updateChildren(updatedDataItemToEditMap);
         }
     }
 }
