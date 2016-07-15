@@ -114,4 +114,6 @@
     <string name="sort_by_most_recently_changed_value">timestampLastChangedReverse/timestamp</string>
     <string name="pref_name_sort_order_lists">pref_sort_order_lists</string>
     <string name="action_settings">Settings</string>
+    <string name="tittle_activity_share_list">Share List</string>
+    <string name="toast_is_already_your_friend">%s is already your friend!</string>
 </resources>

@@ -2,11 +2,13 @@ package com.shoplist.myshoplistplus.sharing;
 
 import android.app.Activity;
 import android.view.View;
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.model.User;
 
@@ -39,7 +41,7 @@ public class FriendAdapter extends FirebaseListAdapter<User> {
 
     @Override
     protected void populateView(View v, final User friend, int position) {
-
+        ((TextView)v.findViewById(R.id.user_name)).setText(friend.getName());
     }
 
 

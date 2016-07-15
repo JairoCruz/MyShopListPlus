@@ -21,6 +21,13 @@ public class Utils {
     }
 
     /**
+     * Email is being decoded just once to display real email in AutocompleteFriendAdapter
+     */
+    public static String decodeEmail(String userEmail){
+        return userEmail.replace(",", ".");
+    }
+
+    /**
      * Return true if currentUserEmail equals to shoppinList.owner()
      * Return false otherwise
      */

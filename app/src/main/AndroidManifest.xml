@@ -46,9 +46,17 @@
         </activity>
         <activity android:name=".login.CreateAccountActivity" />
         <activity android:name=".sharing.AddFriendActivity" />
-        <activity android:name=".sharing.ShareListActivity"></activity>
         <activity android:name=".SettingsActivity"
             android:label="@string/action_settings"/>
+        <activity
+            android:name=".sharing.ShareListActivity"
+            android:label="@string/tittle_activity_share_list"
+            android:parentActivityName=".activeListDetail.ActiveListDetailsActivity"
+            android:windowSoftInputMode="adjustPan">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activeListDetail.ActiveListDetailsActivity"/>
+        </activity>
     </application>
 
 </manifest>

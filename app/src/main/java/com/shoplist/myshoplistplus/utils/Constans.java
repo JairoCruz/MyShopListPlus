@@ -21,6 +21,7 @@ public final class Constans {
     public static final String FIREBASE_LOCATION_USER_LISTS = "userLists";
     public static final String FIREBASE_LOCATION_SHOPPING_LIST_ITEMS = "shoppingListItems";
     public static final String FIREBASE_LOCATION_USERS = "users";
+    public static final String FIREBASE_LOCATION_USER_FRIENDS = "userFriends";
 
     /**
      * Constants for bundles, extras and shared preferences keys

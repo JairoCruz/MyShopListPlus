@@ -27,6 +27,7 @@ import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.model.ShoppingListItem;
 import com.shoplist.myshoplistplus.model.User;
+import com.shoplist.myshoplistplus.sharing.ShareListActivity;
 import com.shoplist.myshoplistplus.utils.Constans;
 import com.shoplist.myshoplistplus.utils.Utils;
 
@@ -267,7 +268,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
         /* Only the edit and remove options are implemented */
         remove.setVisible(mCurrentUserIsOwner);
         edit.setVisible(mCurrentUserIsOwner);
-        share.setVisible(false);
+        share.setVisible(mCurrentUserIsOwner);
         archive.setVisible(false);
         return true;
     }
@@ -290,6 +291,8 @@ public class ActiveListDetailsActivity extends BaseActivity {
 
         /* Eventually we'll add this */
         if (id == R.id.action_share_list) {
+            Intent intent = new Intent(ActiveListDetailsActivity.this, ShareListActivity.class);
+            startActivity(intent);
             return true;
         }
 
