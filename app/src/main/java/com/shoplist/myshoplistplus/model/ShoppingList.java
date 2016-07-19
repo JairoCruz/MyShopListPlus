@@ -65,4 +65,11 @@ public class ShoppingList {
     public HashMap<String, User> getUsersShopping() {
         return usersShopping;
     }
+
+
+    public void setTimestampLastChangedToNow(){
+        HashMap<String, Object> timestampNowObject = new HashMap<String, Object>();
+        timestampNowObject.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
+        this.timestampLastChanged = timestampNowObject;
+    }
 }

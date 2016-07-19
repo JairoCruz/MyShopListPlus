@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
+import com.shoplist.myshoplistplus.model.User;
 import com.shoplist.myshoplistplus.utils.Constans;
 import com.shoplist.myshoplistplus.utils.Utils;
 
@@ -28,17 +29,19 @@ public class RemoveListDialogFragment extends DialogFragment {
 
     String mListId;
     String mListOwner;
+    HashMap mSharedWith;
     final static String LOG_TAG = RemoveListDialogFragment.class.getSimpleName();
 
 
     /**
      * Public static constructor that creates fragment and passes a bundle with data into it when adapter is created
      */
-    public static RemoveListDialogFragment newInstance(ShoppingList shoppingList, String listId){
+    public static RemoveListDialogFragment newInstance(ShoppingList shoppingList, String listId, HashMap<String, User> sharedWithUsers){
         RemoveListDialogFragment removeListDialogFragment = new RemoveListDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constans.KEY_LIST_ID, listId);
         bundle.putString(Constans.KEY_LIST_OWNER, shoppingList.getOwner());
+        bundle.putSerializable(Constans.KEY_SHARED_WITH_USERS, sharedWithUsers);
         removeListDialogFragment.setArguments(bundle);
         return removeListDialogFragment;
     }
@@ -52,6 +55,7 @@ public class RemoveListDialogFragment extends DialogFragment {
         // Recupero el valor del bundle pasado a traves de newInstanceHelper
         mListId = getArguments().getString(Constans.KEY_LIST_ID);
         mListOwner = getArguments().getString(Constans.KEY_LIST_OWNER);
+        mSharedWith = (HashMap) getArguments().getSerializable(Constans.KEY_SHARED_WITH_USERS);
     }
 
     @Override
@@ -85,7 +89,7 @@ public class RemoveListDialogFragment extends DialogFragment {
         HashMap<String, Object> removeListData = new HashMap<String, Object>();
 
        /* Remove the ShoppingList from both user lists and active lists */
-        Utils.updateMapForAllWithValue(mListId, mListOwner, removeListData, "", null);
+        Utils.updateMapForAllWithValue(mSharedWith,mListId, mListOwner, removeListData, "", null);
 
         /* Remove the associdated list items */
         removeListData.put("/" + Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId, null);

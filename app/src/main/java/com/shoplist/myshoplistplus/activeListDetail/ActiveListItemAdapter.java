@@ -35,6 +35,7 @@ public class ActiveListItemAdapter extends FirebaseListAdapter<ShoppingListItem>
     private ShoppingList mShoppingList;
     private String mListId;
     private String mEncodedEmail;
+    private HashMap<String, User> mSharedWithUsers;
 
     /**
      * Public constructor that initializes private instance variables when adapter is created
@@ -54,6 +55,11 @@ public class ActiveListItemAdapter extends FirebaseListAdapter<ShoppingListItem>
         this.notifyDataSetChanged();
     }
 
+
+    public void setSharedWithUsers(HashMap<String, User> sharedWithUsers){
+        this.mSharedWithUsers = sharedWithUsers;
+        this.notifyDataSetChanged();
+    }
 
 
     /**
@@ -184,7 +190,7 @@ public class ActiveListItemAdapter extends FirebaseListAdapter<ShoppingListItem>
 
 
         /* Add the updated timestamp */
-        Utils.updateMapWithTimestampLastChanged(mListId, mShoppingList.getOwner(), updatedRemoveItemMap);
+        Utils.updateMapWithTimestampLastChanged(mSharedWithUsers, mListId, mShoppingList.getOwner(), updatedRemoveItemMap);
 
         /* Do the update */
         firebaseRef.updateChildren(updatedRemoveItemMap);

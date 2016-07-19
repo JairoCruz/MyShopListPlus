@@ -11,6 +11,7 @@ import com.google.firebase.database.ServerValue;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
 import com.shoplist.myshoplistplus.model.ShoppingListItem;
+import com.shoplist.myshoplistplus.model.User;
 import com.shoplist.myshoplistplus.utils.Constans;
 import com.shoplist.myshoplistplus.utils.Utils;
 
@@ -31,9 +32,10 @@ public class AddListItemDialogFragment extends EditListDialogFragment {
     /**
      * Public static constructor that creates fragment and passes a bundle with data into it when adapter is created
      */
-    public static AddListItemDialogFragment newInstance(ShoppingList shoppingList, String listId, String encodedEmail){
+    public static AddListItemDialogFragment newInstance(ShoppingList shoppingList, String listId, String encodedEmail,
+                                                        HashMap<String, User> sharedWithUsers){
         AddListItemDialogFragment addListItemDialogFragment = new AddListItemDialogFragment();
-        Bundle bundle = newInstanceHelper(shoppingList, R.layout.dialog_add_item, listId, encodedEmail);
+        Bundle bundle = EditListDialogFragment.newInstanceHelper(shoppingList, R.layout.dialog_add_item, listId, encodedEmail, sharedWithUsers);
         addListItemDialogFragment.setArguments(bundle);
         return addListItemDialogFragment;
     }
@@ -85,7 +87,7 @@ public class AddListItemDialogFragment extends EditListDialogFragment {
 
 
             /* Update affected lists timestamps */
-            Utils.updateMapWithTimestampLastChanged(mListId, mOwner, updateItemToAddMap);
+            Utils.updateMapWithTimestampLastChanged(mSharedWith, mListId, mOwner, updateItemToAddMap);
 
             /* Do the update */
             firebaseRef.updateChildren(updateItemToAddMap);

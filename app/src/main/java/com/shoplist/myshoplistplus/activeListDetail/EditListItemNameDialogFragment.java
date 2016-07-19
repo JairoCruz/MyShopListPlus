@@ -8,6 +8,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
+import com.shoplist.myshoplistplus.model.User;
 import com.shoplist.myshoplistplus.utils.Constans;
 import com.shoplist.myshoplistplus.utils.Utils;
 
@@ -26,9 +27,10 @@ public class EditListItemNameDialogFragment extends EditListDialogFragment {
     /**
      * Public static constructor that creates fragments and passes a bundle with data into it when adapter is created
      */
-    public static EditListItemNameDialogFragment  newInstance(ShoppingList shoppingList, String itemName, String itemId, String listId, String encodedEmail){
+    public static EditListItemNameDialogFragment  newInstance(ShoppingList shoppingList, String itemName, String itemId, String listId, String encodedEmail,
+                                                              HashMap<String, User> sharedWithUsers){
         EditListItemNameDialogFragment editListItemNameDialogFragment = new EditListItemNameDialogFragment();
-        Bundle bundle = EditListDialogFragment.newInstanceHelper(shoppingList, R.layout.dialog_edit_item, listId, encodedEmail);
+        Bundle bundle = EditListDialogFragment.newInstanceHelper(shoppingList, R.layout.dialog_edit_item, listId, encodedEmail, sharedWithUsers);
         bundle.putString(Constans.KEY_LIST_ITEM_NAME, itemName);
         bundle.putString(Constans.KEY_LIST_ITEM_ID, itemId);
         editListItemNameDialogFragment.setArguments(bundle);
@@ -82,7 +84,7 @@ public class EditListItemNameDialogFragment extends EditListDialogFragment {
 
 
             /* Update affected lists timestamps */
-            Utils.updateMapWithTimestampLastChanged(mListId, mOwner, updatedDataItemToEditMap);
+            Utils.updateMapWithTimestampLastChanged(mSharedWith,mListId, mOwner, updatedDataItemToEditMap);
 
             /* Do the update */
             firebaseRef.updateChildren(updatedDataItemToEditMap);

@@ -2,6 +2,7 @@ package com.shoplist.myshoplistplus.utils;
 
 import com.google.firebase.database.ServerValue;
 import com.shoplist.myshoplistplus.model.ShoppingList;
+import com.shoplist.myshoplistplus.model.User;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class Utils {
      * The HashMap can then be used with (@link Firebase#updateChildren(Map)) to update the property
      * for all ShoppingList copies.
      *
+     * @param sharedWith
      * @param listId                The id of the sopping list.
      * @param owner                 The owner of the shopping list.
      * @param mapToUpdate           The map containing the key, value pairs which will be used
@@ -51,9 +53,14 @@ public class Utils {
      * @return The updated HasMap with the new value inserted in all List
      *
      */
-    public static HashMap<String, Object> updateMapForAllWithValue(final String listId, final String owner, HashMap<String, Object> mapToUpdate,
+    public static HashMap<String, Object> updateMapForAllWithValue(final HashMap<String, User> sharedWith,final String listId, final String owner, HashMap<String, Object> mapToUpdate,
                                                                    String propertyToUpdate, Object valueToUpdate){
         mapToUpdate.put("/" + Constans.FIREBASE_LOCATION_USER_LISTS + "/" + owner + "/" + listId + "/" + propertyToUpdate, valueToUpdate);
+        if (sharedWith != null){
+            for (User user : sharedWith.values()){
+                mapToUpdate.put("/" + Constans.FIREBASE_LOCATION_USER_LISTS + "/" + user.getEmail() + "/" + listId + "/" + propertyToUpdate, valueToUpdate);
+            }
+        }
         return mapToUpdate;
     }
 
@@ -63,6 +70,7 @@ public class Utils {
      * the ShoppingList copies. This method use {@link #updateMapForAllWithValue} to update the
      * last changed timestamp for all ShoppingList copies.
      *
+     * @param sharedWith
      * @param listId                    The id of the shopping list.
      * @param owner                     The owner of the shoppintg list.
      * @param mapToAddDateToUpdate      The map containing the key, value pairs which will be used
@@ -72,14 +80,14 @@ public class Utils {
      * @return
      */
     public static HashMap<String, Object> updateMapWithTimestampLastChanged
-    (final String listId, final String owner, HashMap<String, Object> mapToAddDateToUpdate){
+    (final HashMap<String, User> sharedWith,final String listId, final String owner, HashMap<String, Object> mapToAddDateToUpdate){
         /**
          * Set raw version of date to the ServerValue.TIMESTAMP value and save into dateCreateMap
          */
         HashMap<String, Object> timestampNowHash = new HashMap<>();
         timestampNowHash.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
 
-        updateMapForAllWithValue(listId, owner, mapToAddDateToUpdate, Constans.FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED, timestampNowHash);
+        updateMapForAllWithValue(sharedWith, listId, owner, mapToAddDateToUpdate, Constans.FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED, timestampNowHash);
 
         return mapToAddDateToUpdate;
     }

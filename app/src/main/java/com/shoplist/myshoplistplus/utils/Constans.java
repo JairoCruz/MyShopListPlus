@@ -38,6 +38,7 @@ public final class Constans {
     public static final String KEY_LIST_OWNER = "LIST_OWNER";
     public static final String KEY_SIGNUP_EMAIL = "SIGNUP_EMAIL";
     public static final String KEY_PREF_SORT_ORDER_LISTS = "PREF_SORT_ORDER_LISTS";
+    public static final String KEY_SHARED_WITH_USERS = "SHARED_WITH_USERS";
 
 
     /**

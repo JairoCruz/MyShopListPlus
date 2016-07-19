@@ -17,7 +17,10 @@ import android.widget.TextView;
 
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
+import com.shoplist.myshoplistplus.model.User;
 import com.shoplist.myshoplistplus.utils.Constans;
+
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,17 +32,23 @@ public abstract  class EditListDialogFragment extends DialogFragment {
     EditText mEditTextForList;
     int mResource;
     String mListId;
+    HashMap mSharedWith;
 
 
     /**
      * Helper method that creates a basic bundle of all of the information needed to change values in a shopping list.
-     * @param shoppingList
-     * @param resource
-     * @return
+     * @param shoppingList The shopping list htat the dialog is editing
+     * @param resource The xml layout file associated with the dialog
+     * @param listId The id of the shopping list the dialog is editing
+     * @param encodedEmail The encoded email of the current user
+     * @param sharedWithUsers The HashMap containing all users that the current shopping list is shared with
+     * @return The bundel containing all the arguments.
      */
 
-    protected static Bundle newInstanceHelper(ShoppingList shoppingList, int resource, String listId, String encodedEmail){
+    protected static Bundle newInstanceHelper(ShoppingList shoppingList, int resource, String listId, String encodedEmail,
+                                              HashMap<String, User> sharedWithUsers){
         Bundle bundle = new Bundle();
+        bundle.putSerializable(Constans.KEY_SHARED_WITH_USERS, sharedWithUsers);
         bundle.putString(Constans.KEY_LIST_ID, listId);
         bundle.putInt(Constans.KEY_LAYOUT_RSOURCE, resource);
         bundle.putString(Constans.KEY_LIST_OWNER, shoppingList.getOwner());
@@ -52,6 +61,7 @@ public abstract  class EditListDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSharedWith = (HashMap) getArguments().getSerializable(Constans.KEY_SHARED_WITH_USERS);
         mListId = getArguments().getString(Constans.KEY_LIST_ID);
         mResource = getArguments().getInt(Constans.KEY_LAYOUT_RSOURCE);
         mOwner = getArguments().getString(Constans.KEY_LIST_OWNER);

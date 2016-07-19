@@ -8,6 +8,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.shoplist.myshoplistplus.R;
 import com.shoplist.myshoplistplus.model.ShoppingList;
+import com.shoplist.myshoplistplus.model.User;
 import com.shoplist.myshoplistplus.utils.Constans;
 import com.shoplist.myshoplistplus.utils.Utils;
 
@@ -25,9 +26,10 @@ public class EditListNameDialogFragment extends EditListDialogFragment {
     /**
      * Public static constructor that creates fragment and passes a bundle with data into it when adapter is created
      */
-    public static EditListNameDialogFragment newInstance(ShoppingList shoppingList, String listId, String encodedemail){
+    public static EditListNameDialogFragment newInstance(ShoppingList shoppingList, String listId, String encodedemail,
+                                                         HashMap<String, User> sharedWithUsers){
         EditListNameDialogFragment editListNameDialogFragment = new EditListNameDialogFragment();
-        Bundle bundle = EditListDialogFragment.newInstanceHelper(shoppingList, R.layout.dialog_edit_list, listId, encodedemail);
+        Bundle bundle = EditListDialogFragment.newInstanceHelper(shoppingList, R.layout.dialog_edit_list, listId, encodedemail, sharedWithUsers);
         // Paso el valor del nombre de lista por medio de esta intancia empleando el bundle
         bundle.putString(Constans.KEY_LIST_NAME, shoppingList.getListName());
         editListNameDialogFragment.setArguments(bundle);
@@ -78,10 +80,10 @@ public class EditListNameDialogFragment extends EditListDialogFragment {
             HashMap<String, Object> updatedListData = new HashMap<String, Object>();
 
             /* Add the value to update at the specified property for all lists */
-            Utils.updateMapForAllWithValue(mListId, mOwner, updatedListData, Constans.FIREBASE_PROPERTY_LIST_NAME, inputListName);
+            Utils.updateMapForAllWithValue(mSharedWith,mListId, mOwner, updatedListData, Constans.FIREBASE_PROPERTY_LIST_NAME, inputListName);
 
             /* Update affected lists timestamps */
-            Utils.updateMapWithTimestampLastChanged(mListId, mOwner, updatedListData);
+            Utils.updateMapWithTimestampLastChanged(mSharedWith,mListId, mOwner, updatedListData);
 
             /* Do a deep-path update */
             firebaseRef.updateChildren(updatedListData);
