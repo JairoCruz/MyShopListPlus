@@ -33,6 +33,7 @@ public class FriendAdapter extends FirebaseListAdapter<User> {
     private String mListId;
     private DatabaseReference mFirebaseRef;
     private HashMap<String, User> mSharedUsersList;
+    private HashMap<DatabaseReference, ValueEventListener> mLocationListenerMap;
 
 
     public FriendAdapter(Activity activity, Class<User> modelClass, int modelLayout, Query ref, String listId) {
@@ -40,6 +41,7 @@ public class FriendAdapter extends FirebaseListAdapter<User> {
         this.mActivity = activity;
         this.mListId = listId;
         mFirebaseRef = FirebaseDatabase.getInstance().getReference();
+        mLocationListenerMap = new HashMap<>();
     }
 
     /**
@@ -70,7 +72,7 @@ public class FriendAdapter extends FirebaseListAdapter<User> {
          * (if they are in the the sharedWith List) or null (if they are not in the sharedWith list)
          */
 
-        ValueEventListener listener = sharedFriendInShoppingListRef.addValueEventListener(new ValueEventListener() {
+        final ValueEventListener listener = sharedFriendInShoppingListRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final User sharedFriendInShoppingList = dataSnapshot.getValue(User.class);
@@ -112,6 +114,7 @@ public class FriendAdapter extends FirebaseListAdapter<User> {
                             mFirebaseRef.updateChildren(updatedUserData);
                         }
                     });
+
                 }
             }
 
@@ -120,6 +123,8 @@ public class FriendAdapter extends FirebaseListAdapter<User> {
                 Log.e(LOG_TAG, "Error the lectura "   + databaseError.getMessage());
             }
         });
+        /* Add the listener to the HasMap so that it can be removed on cleanup */
+        mLocationListenerMap.put(sharedFriendInShoppingListRef, listener);
     }
 
 
@@ -194,5 +199,9 @@ public class FriendAdapter extends FirebaseListAdapter<User> {
     @Override
     public void cleanup() {
         super.cleanup();
+        /* Clean up the event listeners */
+        for (HashMap.Entry<DatabaseReference, ValueEventListener> listenerToClean : mLocationListenerMap.entrySet()){
+            listenerToClean.getKey().removeEventListener(listenerToClean.getValue());
+        }
     }
 }
