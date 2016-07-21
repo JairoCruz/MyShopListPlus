@@ -93,7 +93,13 @@ public class FriendAdapter extends FirebaseListAdapter<User> {
                             HashMap<String, Object> updatedUserData = updateFriendInSharedWith(false, friend);
 
                             /* Do a deep-path update */
-                            mFirebaseRef.updateChildren(updatedUserData);
+                            mFirebaseRef.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    Utils.updateTimestampReversed(databaseError, LOG_TAG, mListId,
+                                            mSharedUsersList, mShoppingList.getOwner());
+                                }
+                            });
                         }
                     });
                 }else{
@@ -111,7 +117,13 @@ public class FriendAdapter extends FirebaseListAdapter<User> {
                             HashMap<String, Object> updatedUserData = updateFriendInSharedWith(true, friend);
 
                             /* Do a deep-path update */
-                            mFirebaseRef.updateChildren(updatedUserData);
+                            mFirebaseRef.updateChildren(updatedUserData, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    Utils.updateTimestampReversed(databaseError, LOG_TAG, mListId,
+                                            mSharedUsersList, mShoppingList.getOwner());
+                                }
+                            });
                         }
                     });
 

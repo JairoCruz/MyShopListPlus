@@ -15,6 +15,7 @@ public final class Constans {
     public static final String FIREBASE_PROPERTY_BOUGHT = "bought";
     public static final String FIREBASE_PROPERTY_BOUGHT_BY = "boughtBy";
     public static final String FIREBASE_PROPERTY_USERS_SHOPPING = "usersShopping";
+    public static final String FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED_REVERSE = "timestampLastChangedReverse";
 
 
 

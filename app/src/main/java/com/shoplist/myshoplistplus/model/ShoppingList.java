@@ -1,5 +1,6 @@
 package com.shoplist.myshoplistplus.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.firebase.database.ServerValue;
 import com.shoplist.myshoplistplus.utils.Constans;
 
@@ -17,6 +18,7 @@ public class ShoppingList {
     private HashMap<String,Object> timestampLastChanged;
     private HashMap<String,Object> timestampCreated;
     private HashMap<String, User> usersShopping;
+    private HashMap<String, Object> timestampLastChangedReverse;
 
 
     public ShoppingList(){
@@ -34,6 +36,7 @@ public class ShoppingList {
         timestampLastChangedObj.put(Constans.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
         this.timestampLastChanged = timestampLastChangedObj;
         this.usersShopping = new HashMap<>();
+        this.timestampLastChangedReverse = null;
 
     }
 
@@ -66,6 +69,19 @@ public class ShoppingList {
         return usersShopping;
     }
 
+    public HashMap<String, Object> getTimestampLastChangedReverse() {
+        return timestampLastChangedReverse;
+    }
+
+    @JsonIgnore
+    public long getTimestampLastChangedReverseLong(){
+        return (long)timestampLastChangedReverse.get(Constans.FIREBASE_PROPERTY_TIMESTAMP);
+    }
+
+    @JsonIgnore
+    public long getTimestampLastChangedLong(){
+        return (long) timestampLastChanged.get(Constans.FIREBASE_PROPERTY_TIMESTAMP);
+    }
 
     public void setTimestampLastChangedToNow(){
         HashMap<String, Object> timestampNowObject = new HashMap<String, Object>();

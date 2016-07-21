@@ -3,6 +3,7 @@ package com.shoplist.myshoplistplus.activeListDetail;
 import android.app.Dialog;
 import android.os.Bundle;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -87,7 +88,13 @@ public class EditListItemNameDialogFragment extends EditListDialogFragment {
             Utils.updateMapWithTimestampLastChanged(mSharedWith,mListId, mOwner, updatedDataItemToEditMap);
 
             /* Do the update */
-            firebaseRef.updateChildren(updatedDataItemToEditMap);
+            firebaseRef.updateChildren(updatedDataItemToEditMap, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    /* Now that we have the timestamp, update the reversed timestamp */
+                    Utils.updateTimestampReversed(databaseError, "EditListItem", mListId, mSharedWith, mOwner);
+                }
+            });
         }
     }
 }

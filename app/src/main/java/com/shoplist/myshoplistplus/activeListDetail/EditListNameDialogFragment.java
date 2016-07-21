@@ -3,6 +3,7 @@ package com.shoplist.myshoplistplus.activeListDetail;
 import android.app.Dialog;
 import android.os.Bundle;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -73,7 +74,7 @@ public class EditListNameDialogFragment extends EditListDialogFragment {
          * and that the dialog was properly initialized with the current name and id of the list.
          */
         if (!inputListName.equals("") && mListName != null && mListId != null && !inputListName.equals(mListName)){
-            DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference();
+            final DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference();
             /**
              * Create map and fill it in with deep path multi write operations list
              */
@@ -86,7 +87,13 @@ public class EditListNameDialogFragment extends EditListDialogFragment {
             Utils.updateMapWithTimestampLastChanged(mSharedWith,mListId, mOwner, updatedListData);
 
             /* Do a deep-path update */
-            firebaseRef.updateChildren(updatedListData);
+            firebaseRef.updateChildren(updatedListData, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    /* Now that we have the timestamp, update the resersed timestamp */
+                    Utils.updateTimestampReversed(databaseError, LOG_TAG, mListId, mSharedWith, mOwner);
+                }
+            });
         }
     }
 }

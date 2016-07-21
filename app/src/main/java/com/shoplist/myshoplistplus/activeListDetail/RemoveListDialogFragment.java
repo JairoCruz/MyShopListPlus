@@ -93,6 +93,10 @@ public class RemoveListDialogFragment extends DialogFragment {
 
         /* Remove the associdated list items */
         removeListData.put("/" + Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId, null);
+        /* Remove the lists shared with */
+        removeListData.put("/" + Constans.FIREBASE_LOCATION_LISTS_SHARED_WITH + "/" + mListId, null);
+
+        Log.e("eliminar", removeListData.toString());
 
         /* do a deep-path update */
         firebaseRef.updateChildren(removeListData, new DatabaseReference.CompletionListener() {

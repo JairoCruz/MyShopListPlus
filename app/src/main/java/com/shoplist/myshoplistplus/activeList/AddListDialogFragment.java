@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -149,7 +150,13 @@ public class AddListDialogFragment extends DialogFragment {
            HashMap<String, Object> shoppingListMap = (HashMap<String, Object>) new ObjectMapper().convertValue(newShoppingList, Map.class);
             Utils.updateMapForAllWithValue(null ,listId, mEncodedEmail, updateShoppingListData, "", shoppingListMap);
 
-            firebaseRef.updateChildren(updateShoppingListData);
+            firebaseRef.updateChildren(updateShoppingListData, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    /* Now that we have the timestamp, update the resersed timestamp */
+                    Utils.updateTimestampReversed(databaseError, "AddList", listId, null, mEncodedEmail);
+                }
+            });
 
             /* Form short set method push() and setvalue()*/
             /* myRef.push().setValue(newShoppingList); */

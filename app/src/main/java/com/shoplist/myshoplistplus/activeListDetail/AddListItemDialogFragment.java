@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -90,7 +91,14 @@ public class AddListItemDialogFragment extends EditListDialogFragment {
             Utils.updateMapWithTimestampLastChanged(mSharedWith, mListId, mOwner, updateItemToAddMap);
 
             /* Do the update */
-            firebaseRef.updateChildren(updateItemToAddMap);
+            firebaseRef.updateChildren(updateItemToAddMap, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    /* Now that we have the timestamp, update the reserved timestamp */
+                    Utils.updateTimestampReversed(databaseError, "AddListItem", mListId,
+                            mSharedWith, mOwner);
+                }
+            });
 
             /**
              * Close the dialog fragment when done

@@ -429,7 +429,13 @@ public class ActiveListDetailsActivity extends BaseActivity {
 
             /* Do a deep-path update */
 
-            mFirebaseRef.updateChildren(updateUserData);
+            mFirebaseRef.updateChildren(updateUserData, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    /* Updates the reversed timestamp */
+                    Utils.updateTimestampReversed(databaseError, LOG_TAG, mListId,mSharedWithUsers, mShoppingList.getOwner());
+                }
+            });
         }else{
             /**
              * If current user is not shopping, create map to represent User model add to usersShopping map
@@ -443,7 +449,13 @@ public class ActiveListDetailsActivity extends BaseActivity {
             Utils.updateMapWithTimestampLastChanged(mSharedWithUsers, mListId, mShoppingList.getOwner(), updateUserData);
 
             /* Do a deep-path update */
-            mFirebaseRef.updateChildren(updateUserData);
+            mFirebaseRef.updateChildren(updateUserData, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    /* Updates the reversed timestamp */
+                    Utils.updateTimestampReversed(databaseError, LOG_TAG, mListId, mSharedWithUsers, mShoppingList.getOwner());
+                }
+            });
         }
     }
 

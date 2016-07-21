@@ -193,6 +193,12 @@ public class ActiveListItemAdapter extends FirebaseListAdapter<ShoppingListItem>
         Utils.updateMapWithTimestampLastChanged(mSharedWithUsers, mListId, mShoppingList.getOwner(), updatedRemoveItemMap);
 
         /* Do the update */
-        firebaseRef.updateChildren(updatedRemoveItemMap);
+        firebaseRef.updateChildren(updatedRemoveItemMap, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                Utils.updateTimestampReversed(databaseError, "ActListItemAdap", mListId, mSharedWithUsers,
+                        mShoppingList.getOwner());
+            }
+        });
     }
 }
