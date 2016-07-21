@@ -87,9 +87,11 @@ public class RemoveListDialogFragment extends DialogFragment {
          * Create map and fill it in with deep path multi write operations list
          */
         HashMap<String, Object> removeListData = new HashMap<String, Object>();
+        Log.e("Antes", "Esto es antes" + removeListData.toString());
 
        /* Remove the ShoppingList from both user lists and active lists */
         Utils.updateMapForAllWithValue(mSharedWith,mListId, mListOwner, removeListData, "", null);
+        Log.e("Despues", "Esto es despues" + removeListData.toString());
 
         /* Remove the associdated list items */
         removeListData.put("/" + Constans.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId, null);
